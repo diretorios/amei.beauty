@@ -1,5 +1,4 @@
-# Workers configuration (used by wrangler deploy)
-# Note: When deploying Workers, the name will be "amei-beauty-api" (set via --name flag)
+name = "amei-beauty"
 main = "workers/index.ts"
 name = "amei-beauty-api"  # Default name for Workers (overridden by --name flag in scripts)
 compatibility_date = "2024-01-01"
