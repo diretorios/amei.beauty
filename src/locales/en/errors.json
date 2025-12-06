@@ -1,0 +1,12 @@
+{
+  "generic": "An error occurred. Please try again.",
+  "required": "This field is required",
+  "invalid_email": "Invalid email",
+  "invalid_phone": "Invalid phone number",
+  "invalid_url": "Invalid URL",
+  "file_too_large": "File too large",
+  "unsupported_file_type": "Unsupported file type",
+  "save_failed": "Failed to save",
+  "load_failed": "Failed to load data"
+}
+

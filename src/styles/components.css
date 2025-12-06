@@ -1,0 +1,213 @@
+/**
+ * Component-specific styles
+ */
+
+/* Input Group */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.input-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  min-height: 44px;
+  transition: border-color var(--transition-fast);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.input-error {
+  border-color: var(--color-error);
+}
+
+.input-help {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.input-error-message {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+/* Language Selector */
+.language-selector {
+  position: relative;
+}
+
+.language-select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.language-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* Onboarding Page */
+.onboarding-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
+}
+
+.onboarding-container {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.onboarding-title {
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-gray-900);
+}
+
+.onboarding-subtitle {
+  text-align: center;
+  color: var(--color-gray-600);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.onboarding-steps {
+  margin-bottom: var(--spacing-xl);
+}
+
+.onboarding-step h2 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-gray-900);
+}
+
+.onboarding-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: space-between;
+}
+
+.onboarding-actions .btn {
+  flex: 1;
+}
+
+/* Photo Upload */
+.photo-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.photo-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.photo-upload-button {
+  display: inline-block;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--transition-fast);
+}
+
+.photo-upload-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.photo-upload-help {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  text-align: center;
+}
+
+.photo-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.photo-preview img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--color-primary);
+}
+
+/* Profile Page */
+.profile-page {
+  min-height: 100vh;
+  background-color: var(--color-gray-50);
+}
+
+.profile-header {
+  background-color: var(--color-white);
+  padding: var(--spacing-lg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.profile-header h1 {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+}
+
+.profile-content {
+  padding: var(--spacing-xl);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .onboarding-container {
+    padding: var(--spacing-xl);
+  }
+
+  .onboarding-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .onboarding-step h2 {
+    font-size: var(--font-size-lg);
+  }
+}
+

@@ -1,0 +1,45 @@
+{
+  "title": "Crea tu tarjeta profesional",
+  "subtitle": "En solo 1 minuto",
+  "step1": {
+    "title": "¿Cuál es tu nombre?",
+    "label": "Nombre completo",
+    "placeholder": "Ingresa tu nombre completo",
+    "help": "Este será el nombre mostrado en tu tarjeta profesional"
+  },
+  "step2": {
+    "title": "¿Cuál es tu profesión?",
+    "label": "Profesión",
+    "placeholder": "Ej: Peluquera, Manicurista, Maquilladora",
+    "help": "Describe tu profesión en pocas palabras"
+  },
+  "step3": {
+    "title": "¿Cuál es tu WhatsApp?",
+    "label": "Número de WhatsApp",
+    "placeholder": "+34 612 345 678",
+    "help": "Tus clientes usarán este número para contactarte",
+    "format_hint": "Formato: +34 612 345 678"
+  },
+  "step4": {
+    "title": "Añade tu foto profesional",
+    "label": "Foto",
+    "help": "Una buena foto aumenta tu credibilidad",
+    "upload": "Elegir foto",
+    "change": "Cambiar foto",
+    "remove": "Eliminar foto"
+  },
+  "ai_completion": {
+    "title": "Deja que la IA complete tu perfil",
+    "description": "Estamos buscando tu información en línea...",
+    "review": "Revisa y aprueba lo que encontramos",
+    "review_description": "Revisa las sugerencias a continuación y aprueba lo que deseas usar:",
+    "skip": "Omitir este paso",
+    "start": "Iniciar búsqueda",
+    "loading": "Buscando información..."
+  },
+  "complete": {
+    "title": "¡Listo!",
+    "message": "Tu tarjeta profesional ha sido creada. Ahora puedes personalizarla aún más."
+  }
+}
+

@@ -1,0 +1,23 @@
+{
+  "title": "Descubrir profesionales",
+  "search": "Buscar",
+  "search_placeholder": "Buscar por nombre, servicio o ubicación",
+  "filters": {
+    "category": "Categoría",
+    "location": "Ubicación",
+    "price": "Rango de precios"
+  },
+  "categories": {
+    "all": "Todas",
+    "hair": "Pelo",
+    "nails": "Uñas",
+    "makeup": "Maquillaje",
+    "waxing": "Depilación",
+    "aesthetics": "Estética"
+  },
+  "empty": "No se encontraron profesionales",
+  "featured": "Destacado",
+  "page": "Página",
+  "of": "de"
+}
+

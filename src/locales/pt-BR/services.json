@@ -1,0 +1,18 @@
+{
+  "title": "Serviços",
+  "add": "Adicionar serviço",
+  "edit": "Editar serviço",
+  "delete": "Excluir serviço",
+  "fields": {
+    "name": "Nome do serviço",
+    "price": "Preço",
+    "description": "Descrição"
+  },
+  "placeholders": {
+    "name": "Ex: Corte de cabelo",
+    "price": "Ex: R$ 50,00",
+    "description": "Descreva o serviço oferecido..."
+  },
+  "empty": "Nenhum serviço cadastrado ainda"
+}
+

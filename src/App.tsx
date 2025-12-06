@@ -1,0 +1,61 @@
+import { useEffect, useState } from 'preact/hooks';
+import { Router, Route } from 'preact-router';
+import { i18n } from './lib/i18n';
+import { storage } from './lib/storage';
+import { Navigation } from './components/Navigation';
+import { OnboardingPage } from './pages/OnboardingPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { DirectoryPage } from './pages/DirectoryPage';
+import { PublicCardPage } from './pages/PublicCardPage';
+
+export function App() {
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
+  const [currentPath, setCurrentPath] = useState('');
+
+  useEffect(() => {
+    // Initialize i18n and storage, then check for existing profile
+    Promise.all([i18n.init(), storage.init()]).then(async () => {
+      setIsInitialized(true);
+      // Check if profile exists
+      const existingCard = await storage.loadCard();
+      if (existingCard && existingCard.profile.full_name) {
+        setHasProfile(true);
+      }
+    });
+  }, []);
+
+  if (!isInitialized) {
+    return <div>Loading...</div>;
+  }
+
+  // Show onboarding if no profile exists (unless viewing public card)
+  if (!hasProfile && !currentPath.startsWith('/card/') && !currentPath.startsWith('/@')) {
+    return <OnboardingPage onComplete={() => setHasProfile(true)} />;
+  }
+
+  return (
+    <div className="app">
+      <Navigation currentPath={currentPath} />
+      <Router onChange={(e) => setCurrentPath(e.url)}>
+        <Route path="/" component={ProfilePage} />
+        <Route path="/directory" component={DirectoryPage} />
+        <Route
+          path="/card/:cardId"
+          component={(props: { cardId: string }) => <PublicCardPage cardId={props.cardId} />}
+        />
+        <Route
+          path="/:username"
+          component={(props: { username: string }) => {
+            // Don't match routes that start with known paths
+            if (props.username === 'directory' || props.username === 'card') {
+              return null;
+            }
+            return <PublicCardPage username={props.username} />;
+          }}
+        />
+      </Router>
+    </div>
+  );
+}
+

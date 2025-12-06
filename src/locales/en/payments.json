@@ -1,0 +1,22 @@
+{
+  "title": "Subscription",
+  "plans": {
+    "free": {
+      "name": "Free",
+      "description": "Local editing only"
+    },
+    "basic": {
+      "name": "Basic",
+      "price": "$6/year",
+      "description": "Publish 1 card"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$10/year",
+      "description": "Multiple cards and advanced features"
+    }
+  },
+  "subscribe": "Subscribe",
+  "current_plan": "Current plan"
+}
+

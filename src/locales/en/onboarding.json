@@ -1,0 +1,45 @@
+{
+  "title": "Create your professional card",
+  "subtitle": "In just 1 minute",
+  "step1": {
+    "title": "What's your name?",
+    "label": "Full name",
+    "placeholder": "Enter your full name",
+    "help": "This will be the name displayed on your professional card"
+  },
+  "step2": {
+    "title": "What's your profession?",
+    "label": "Profession",
+    "placeholder": "E.g., Hairdresser, Manicurist, Makeup Artist",
+    "help": "Describe your profession in a few words"
+  },
+  "step3": {
+    "title": "What's your WhatsApp?",
+    "label": "WhatsApp number",
+    "placeholder": "+1 (555) 123-4567",
+    "help": "Your clients will use this number to contact you",
+    "format_hint": "Format: +1 (555) 123-4567"
+  },
+  "step4": {
+    "title": "Add your professional photo",
+    "label": "Photo",
+    "help": "A good photo increases your credibility",
+    "upload": "Choose photo",
+    "change": "Change photo",
+    "remove": "Remove photo"
+  },
+  "ai_completion": {
+    "title": "Let AI complete your profile",
+    "description": "We're searching for your information online...",
+    "review": "Review and approve what we found",
+    "review_description": "Review the suggestions below and approve what you want to use:",
+    "skip": "Skip this step",
+    "start": "Start search",
+    "loading": "Searching for information..."
+  },
+  "complete": {
+    "title": "Done!",
+    "message": "Your professional card has been created. Now you can customize it even more."
+  }
+}
+

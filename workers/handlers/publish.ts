@@ -1,0 +1,162 @@
+/**
+ * Handle card publishing
+ * POST /api/publish
+ */
+
+import type { Env } from '../types';
+import { generateCardId, generateReferralCode, cardToRow, validateCard, rowToCard } from '../utils';
+import type { PublishedCard } from '../../src/models/types';
+
+export async function handlePublish(
+  request: Request,
+  env: Env,
+  corsHeaders: Record<string, string>
+): Promise<Response> {
+  try {
+    const cardData = (await request.json()) as Partial<PublishedCard>;
+
+    // Generate ID and referral code if not provided
+    const card: PublishedCard = {
+      id: cardData.id || generateCardId(),
+      username: cardData.username,
+      referral_code: cardData.referral_code || generateReferralCode(),
+      profile: cardData.profile!,
+      services: cardData.services || [],
+      social: cardData.social || [],
+      links: cardData.links || [],
+      ratings: cardData.ratings || [],
+      testimonials: cardData.testimonials || [],
+      client_photos: cardData.client_photos || [],
+      badges: cardData.badges || [],
+      certifications: cardData.certifications || [],
+      recommendations: cardData.recommendations || { count: 0, recent: [] },
+      location: cardData.location,
+      published_at: cardData.published_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_active: true,
+      is_featured: cardData.is_featured || false,
+      subscription_tier: cardData.subscription_tier || 'free',
+      settings: cardData.settings || {
+        theme: 'system',
+        accent_color: '#10B981',
+        reduce_motion: false,
+        language: 'pt-BR',
+      },
+      created_at: cardData.created_at || new Date().toISOString(),
+    };
+
+    // Validate
+    const errors = validateCard(card);
+    if (errors.length > 0) {
+      return new Response(
+        JSON.stringify({ error: 'Validation failed', details: errors }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Check if username is taken (if provided)
+    if (card.username) {
+      const existing = await env.DB.prepare(
+        'SELECT id FROM cards WHERE username = ? AND id != ?'
+      )
+        .bind(card.username, card.id)
+        .first();
+
+      if (existing) {
+        return new Response(
+          JSON.stringify({ error: 'Username already taken' }),
+          {
+            status: 409,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+
+    // Convert to row
+    const row = cardToRow(card);
+    const now = Date.now();
+
+    // Insert or update
+    await env.DB.prepare(
+      `INSERT INTO cards (
+        id, username, profile_json, services_json, social_json, links_json,
+        ratings_json, testimonials_json, client_photos_json, badges_json,
+        certifications_json, recommendations_json, location_json, referral_code,
+        published_at, updated_at, is_active, is_featured, subscription_tier
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        username = excluded.username,
+        profile_json = excluded.profile_json,
+        services_json = excluded.services_json,
+        social_json = excluded.social_json,
+        links_json = excluded.links_json,
+        ratings_json = excluded.ratings_json,
+        testimonials_json = excluded.testimonials_json,
+        client_photos_json = excluded.client_photos_json,
+        badges_json = excluded.badges_json,
+        certifications_json = excluded.certifications_json,
+        recommendations_json = excluded.recommendations_json,
+        location_json = excluded.location_json,
+        updated_at = excluded.updated_at,
+        is_active = excluded.is_active,
+        is_featured = excluded.is_featured,
+        subscription_tier = excluded.subscription_tier
+      `
+    )
+      .bind(
+        card.id,
+        row.username,
+        row.profile_json,
+        row.services_json,
+        row.social_json,
+        row.links_json,
+        row.ratings_json,
+        row.testimonials_json,
+        row.client_photos_json,
+        row.badges_json,
+        row.certifications_json,
+        row.recommendations_json,
+        row.location_json,
+        row.referral_code,
+        row.published_at || now,
+        now,
+        row.is_active,
+        row.is_featured,
+        row.subscription_tier
+      )
+      .run();
+
+    // Return published card
+    const result = await env.DB.prepare('SELECT * FROM cards WHERE id = ?')
+      .bind(card.id)
+      .first<import('../types').CardRow>();
+
+    if (!result) {
+      throw new Error('Failed to retrieve published card');
+    }
+
+    const publishedCard = rowToCard(result);
+
+    return new Response(JSON.stringify(publishedCard), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Publish error:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'Failed to publish card',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+  }
+}
+

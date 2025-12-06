@@ -1,0 +1,30 @@
+{
+  "app_name": "amei.beauty",
+  "tagline": "Tu tarjeta profesional en 1 minuto",
+  "buttons": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "publish": "Publicar",
+    "unpublish": "Despublicar",
+    "share": "Compartir",
+    "close": "Cerrar",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "finish": "Finalizar",
+    "continue": "Continuar"
+  },
+  "navigation": {
+    "profile": "Perfil",
+    "services": "Servicios",
+    "links": "Enlaces",
+    "social": "Redes Sociales",
+    "settings": "Configuración",
+    "preview": "Vista Previa"
+  },
+  "loading": "Cargando...",
+  "error": "Error",
+  "success": "Éxito"
+}
+

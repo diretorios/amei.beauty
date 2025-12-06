@@ -1,0 +1,12 @@
+{
+  "recommend_button": "¡Me encantó este profesional!",
+  "you_will_love": "¡También te encantará!",
+  "share_love": "¡Comparte el amor!",
+  "recommended_by": "Recomendado por {{name}}",
+  "people_recommended": "{{count}} personas recomendaron",
+  "person_recommended": "{{count}} persona recomendó",
+  "share_message": "¡Me encantó este profesional! Échale un vistazo: {{url}}",
+  "help_grow": "¡Ayuda a este profesional a crecer!",
+  "spread_love": "¡Comparte el amor por los profesionales que amas!"
+}
+

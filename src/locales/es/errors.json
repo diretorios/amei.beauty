@@ -1,0 +1,12 @@
+{
+  "generic": "Ocurrió un error. Intenta de nuevo.",
+  "required": "Este campo es obligatorio",
+  "invalid_email": "Email inválido",
+  "invalid_phone": "Número de teléfono inválido",
+  "invalid_url": "URL inválida",
+  "file_too_large": "Archivo demasiado grande",
+  "unsupported_file_type": "Tipo de archivo no soportado",
+  "save_failed": "Error al guardar",
+  "load_failed": "Error al cargar datos"
+}
+

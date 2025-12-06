@@ -1,0 +1,22 @@
+{
+  "title": "Assinatura",
+  "plans": {
+    "free": {
+      "name": "Grátis",
+      "description": "Edição local apenas"
+    },
+    "basic": {
+      "name": "Básico",
+      "price": "R$ 29/ano",
+      "description": "Publicar 1 cartão"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "R$ 49/ano",
+      "description": "Múltiplos cartões e recursos avançados"
+    }
+  },
+  "subscribe": "Assinar",
+  "current_plan": "Plano atual"
+}
+

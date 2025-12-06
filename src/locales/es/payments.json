@@ -1,0 +1,22 @@
+{
+  "title": "Suscripción",
+  "plans": {
+    "free": {
+      "name": "Gratis",
+      "description": "Solo edición local"
+    },
+    "basic": {
+      "name": "Básico",
+      "price": "$6/año",
+      "description": "Publicar 1 tarjeta"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "$10/año",
+      "description": "Múltiples tarjetas y funciones avanzadas"
+    }
+  },
+  "subscribe": "Suscribirse",
+  "current_plan": "Plan actual"
+}
+

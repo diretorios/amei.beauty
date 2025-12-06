@@ -1,0 +1,17 @@
+{
+  "title": "Perfil",
+  "edit": "Editar perfil",
+  "fields": {
+    "name": "Nombre completo",
+    "profession": "Profesión",
+    "headline": "Título profesional",
+    "bio": "Sobre ti",
+    "whatsapp": "WhatsApp",
+    "photo": "Foto profesional"
+  },
+  "placeholders": {
+    "headline": "Ej: Peluquera especializada en cortes modernos",
+    "bio": "Cuéntanos un poco sobre ti y tu experiencia..."
+  }
+}
+

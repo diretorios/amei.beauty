@@ -1,0 +1,17 @@
+{
+  "title": "Profile",
+  "edit": "Edit profile",
+  "fields": {
+    "name": "Full name",
+    "profession": "Profession",
+    "headline": "Professional headline",
+    "bio": "About you",
+    "whatsapp": "WhatsApp",
+    "photo": "Professional photo"
+  },
+  "placeholders": {
+    "headline": "E.g., Hairdresser specialized in modern cuts",
+    "bio": "Tell us a bit about yourself and your experience..."
+  }
+}
+

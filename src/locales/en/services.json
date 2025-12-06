@@ -1,0 +1,18 @@
+{
+  "title": "Services",
+  "add": "Add service",
+  "edit": "Edit service",
+  "delete": "Delete service",
+  "fields": {
+    "name": "Service name",
+    "price": "Price",
+    "description": "Description"
+  },
+  "placeholders": {
+    "name": "E.g., Haircut",
+    "price": "E.g., $50.00",
+    "description": "Describe the service offered..."
+  },
+  "empty": "No services registered yet"
+}
+

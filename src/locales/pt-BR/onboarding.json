@@ -1,0 +1,45 @@
+{
+  "title": "Crie seu cartão profissional",
+  "subtitle": "Em apenas 1 minuto",
+  "step1": {
+    "title": "Qual é o seu nome?",
+    "label": "Nome completo",
+    "placeholder": "Digite seu nome completo",
+    "help": "Este será o nome exibido no seu cartão profissional"
+  },
+  "step2": {
+    "title": "Qual é a sua profissão?",
+    "label": "Profissão",
+    "placeholder": "Ex: Cabeleireira, Manicure, Maquiadora",
+    "help": "Descreva sua profissão em poucas palavras"
+  },
+  "step3": {
+    "title": "Qual é o seu WhatsApp?",
+    "label": "Número do WhatsApp",
+    "placeholder": "(11) 99999-9999",
+    "help": "Seus clientes vão usar este número para entrar em contato",
+    "format_hint": "Formato: (DDD) 99999-9999"
+  },
+  "step4": {
+    "title": "Adicione sua foto profissional",
+    "label": "Foto",
+    "help": "Uma boa foto aumenta sua credibilidade",
+    "upload": "Escolher foto",
+    "change": "Alterar foto",
+    "remove": "Remover foto"
+  },
+  "ai_completion": {
+    "title": "Deixe a IA completar seu perfil",
+    "description": "Estamos buscando suas informações online...",
+    "review": "Revise e aprove o que encontramos",
+    "review_description": "Revise as sugestões abaixo e aprove o que deseja usar:",
+    "skip": "Pular esta etapa",
+    "start": "Iniciar busca",
+    "loading": "Buscando informações..."
+  },
+  "complete": {
+    "title": "Pronto!",
+    "message": "Seu cartão profissional está criado. Agora você pode personalizá-lo ainda mais."
+  }
+}
+

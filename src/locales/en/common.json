@@ -1,0 +1,30 @@
+{
+  "app_name": "amei.beauty",
+  "tagline": "Your professional card in 1 minute",
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "share": "Share",
+    "close": "Close",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Finish",
+    "continue": "Continue"
+  },
+  "navigation": {
+    "profile": "Profile",
+    "services": "Services",
+    "links": "Links",
+    "social": "Social Media",
+    "settings": "Settings",
+    "preview": "Preview"
+  },
+  "loading": "Loading...",
+  "error": "Error",
+  "success": "Success"
+}
+

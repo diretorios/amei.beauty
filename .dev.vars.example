@@ -1,0 +1,13 @@
+# Example environment variables for local development
+# Copy this to .dev.vars and fill in your values
+# .dev.vars is gitignored and should not be committed
+
+# D1 Database ID (get from: wrangler d1 create amei-cards-db)
+# D1_DATABASE_ID=your-database-id-here
+
+# R2 Bucket name
+# R2_BUCKET_NAME=amei-cards-images
+
+# Environment
+ENVIRONMENT=development
+

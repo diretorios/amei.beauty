@@ -1,0 +1,51 @@
+{
+  "name": "amei.beauty",
+  "version": "0.1.0",
+  "description": "Professional digital business cards for MEI beauty professionals in Brazil",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:workers": "wrangler dev",
+    "dev:full": "concurrently \"npm run dev\" \"npm run dev:workers\"",
+    "build": "tsc && vite build",
+    "build:workers": "wrangler deploy --dry-run",
+    "preview": "vite preview",
+    "deploy:workers": "wrangler deploy",
+    "deploy:pages": "wrangler pages deploy dist --project-name=amei-beauty --commit-dirty=true",
+    "d1:migrate": "wrangler d1 migrations apply amei-beauty-db",
+    "d1:execute": "wrangler d1 execute amei-beauty-db",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\""
+  },
+  "dependencies": {
+    "preact": "^10.19.0",
+    "preact-router": "^4.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@preact/preset-vite": "^2.8.0",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/preact": "^3.2.3",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-v8": "4.0.15",
+    "@vitest/ui": "4.0.15",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.11.0",
+    "jsdom": "^23.0.1",
+    "prettier": "^3.2.0",
+    "typescript": "^5.3.3",
+    "vite": "7.2.6",
+    "vite-plugin-pwa": "1.2.0",
+    "vitest": "4.0.15",
+    "workbox-window": "^7.0.0",
+    "wrangler": "^3.95.0"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "title": "Discover professionals",
+  "search": "Search",
+  "search_placeholder": "Search by name, service or location",
+  "filters": {
+    "category": "Category",
+    "location": "Location",
+    "price": "Price range"
+  },
+  "categories": {
+    "all": "All",
+    "hair": "Hair",
+    "nails": "Nails",
+    "makeup": "Makeup",
+    "waxing": "Waxing",
+    "aesthetics": "Aesthetics"
+  },
+  "empty": "No professionals found",
+  "featured": "Featured",
+  "page": "Page",
+  "of": "of"
+}
+
