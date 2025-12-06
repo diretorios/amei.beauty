@@ -1,13 +1,31 @@
 # Troubleshooting Cloudflare Pages Deployment
 
+## Error: "It looks like you've run a Workers-specific command in a Pages project"
+
+If you see this error:
+```
+✘ [ERROR] It looks like you've run a Workers-specific command in a Pages project.
+  For Pages, please run `wrangler pages deploy` instead.
+```
+
+**👉 Quick Fix:** See [FIX_PAGES_DEPLOY_COMMAND.md](./FIX_PAGES_DEPLOY_COMMAND.md)
+
+**Solution:** Remove the deploy command from Cloudflare Pages settings. Pages should only build (`npm run build`) and deploy static files - no deploy command needed.
+
+---
+
 ## Error: "Authentication error" (403) when deploying Pages
 
-If you're seeing this error in your GitHub Actions workflow:
+If you're seeing this error:
 
 ```
-Cloudflare API returned non-200: 403
-API returned: {"success":false,"errors":[{"code":10000,"message":"Authentication error"}]}
+✘ [ERROR] A request to the Cloudflare API (/accounts/***/pages/projects/amei-beauty) failed.
+  Authentication error [code: 10000]
 ```
+
+**👉 Quick Fix:** 
+- **Can't find Pages permission?** → See [QUICK_FIX_PAGES_PERMISSIONS.md](./QUICK_FIX_PAGES_PERMISSIONS.md)
+- **General token setup** → See [FIX_PAGES_TOKEN_PERMISSIONS.md](./FIX_PAGES_TOKEN_PERMISSIONS.md)
 
 ### ✅ Solution Applied
 

@@ -1,15 +1,17 @@
 name = "amei-beauty"
 main = "workers/index.ts"
+name = "amei-beauty-api"  # Default name for Workers (overridden by --name flag in scripts)
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-### pages_build_output_dir = "dist"
+# Pages configuration (used by Cloudflare Pages GitHub integration)
+# Note: Cloudflare Pages should use wrangler.pages.toml instead, or remove deploy command from Pages settings
+pages_build_output_dir = "dist"
 
 # D1 Database binding
 [[d1_databases]]
 binding = "DB"
 database_name = "amei-beauty-db"
-# Will be set after creating database: wrangler d1 create amei-beauty-db [done.]
 database_id = "def5a00b-d274-4172-927f-02066e778b97"
 
 # R2 Bucket binding for images
