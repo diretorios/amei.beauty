@@ -6,6 +6,8 @@ export interface Env {
   DB: D1Database;
   IMAGES: R2Bucket;
   ENVIRONMENT: string;
+  DEEPSEEK_API_KEY?: string;
+  SERPAPI_API_KEY?: string;
 }
 
 export interface CardRow {

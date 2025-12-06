@@ -11,3 +11,7 @@
 # Environment
 ENVIRONMENT=development
 
+# API Keys (add your actual keys to .dev.vars)
+# DEEPSEEK_API_KEY=your-deepseek-api-key-here
+# SERPAPI_API_KEY=your-serpapi-api-key-here
+

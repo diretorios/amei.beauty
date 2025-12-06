@@ -21,6 +21,14 @@ bucket_name = "amei-beauty-images"
 # Environment variables
 [vars]
 ENVIRONMENT = "development"
+# Note: API keys should be set as secrets in production:
+# For Cloudflare Workers (this file):
+#   npx wrangler secret put DEEPSEEK_API_KEY
+#   npx wrangler secret put SERPAPI_API_KEY
+# For Cloudflare Pages:
+#   npx wrangler pages secret put DEEPSEEK_API_KEY
+#   npx wrangler pages secret put SERPAPI_API_KEY
+# Secrets are not stored in this file for security reasons
 
 # Production environment
 [env.production]

@@ -27,8 +27,126 @@ interface AICompleteResponse {
 }
 
 /**
- * Mock AI completion - In production, integrate with OpenAI/Anthropic/SerpAPI
- * For now, returns intelligent defaults based on profession
+ * Call Deepseek API for profile completion
+ */
+async function callDeepseekAPI(
+  request: AICompleteRequest,
+  apiKey: string
+): Promise<AICompleteResponse> {
+  const { name, profession, whatsapp } = request;
+
+  const prompt = `You are an AI assistant that generates profile information for Brazilian beauty professionals.
+
+Generate a complete profile for:
+- Name: ${name}
+- Profession: ${profession}
+${whatsapp ? `- WhatsApp: ${whatsapp}` : ''}
+- Location: Brazil
+
+Return a JSON object with the following structure:
+{
+  "headline": "A compelling headline in Portuguese",
+  "bio": "A professional bio in Portuguese (2-3 sentences)",
+  "services": [
+    {
+      "id": "1",
+      "name": "Service name in Portuguese",
+      "price": "R$ XX,XX",
+      "description": "Service description in Portuguese"
+    }
+  ],
+  "social": [],
+  "location": {
+    "city": "City name if found",
+    "state": "State abbreviation if found"
+  }
+}
+
+Requirements:
+- All text must be in Brazilian Portuguese
+- Services should be relevant to the profession
+- Prices should be realistic Brazilian prices in R$
+- Generate 3-5 services based on the profession
+- Headline should be professional and appealing
+- Bio should be warm and inviting`;
+
+  try {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant that generates structured JSON responses for Brazilian beauty professionals. Always respond with valid JSON only.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 1500,
+        response_format: { type: 'json_object' }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Deepseek API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices[0]?.message?.content;
+
+    if (!content) {
+      throw new Error('No content in Deepseek response');
+    }
+
+    // Parse JSON response
+    let parsed: any;
+    try {
+      parsed = JSON.parse(content);
+    } catch (parseError) {
+      // If JSON parsing fails, try to extract JSON from markdown code blocks
+      const jsonMatch = content.match(/```(?:json)?\s*(\{[\s\S]*\})\s*```/);
+      if (jsonMatch) {
+        parsed = JSON.parse(jsonMatch[1]);
+      } else {
+        throw new Error('Failed to parse JSON from Deepseek response');
+      }
+    }
+
+    // Map to our response format with validation
+    return {
+      profile: {
+        headline: parsed.headline || undefined,
+        bio: parsed.bio || undefined
+      },
+      services: Array.isArray(parsed.services) ? parsed.services.map((s: any, idx: number) => ({
+        id: s.id || String(idx + 1),
+        name: s.name || '',
+        price: s.price || 'Sob consulta',
+        description: s.description || ''
+      })) : [],
+      social: Array.isArray(parsed.social) ? parsed.social : [],
+      location: parsed.location || undefined,
+      bio: parsed.bio || undefined,
+      headline: parsed.headline || undefined
+    };
+  } catch (error) {
+    console.error('Deepseek API error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Mock AI completion - Fallback when API is unavailable or fails
+ * Returns intelligent defaults based on profession
  */
 function mockAICompletion(request: AICompleteRequest): AICompleteResponse {
   const { name, profession } = request;
@@ -112,15 +230,25 @@ export async function handleAIComplete(
       );
     }
 
-    // In production, this would call:
-    // 1. OpenAI/Anthropic API to search and extract information
-    // 2. SerpAPI to search Google/Brazilian directories
-    // 3. Instagram/Facebook APIs (if user provides social links)
-    // For now, use intelligent defaults
-    const completion = mockAICompletion(body);
+    let completion: AICompleteResponse;
 
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Try Deepseek API if key is available
+    if (env.DEEPSEEK_API_KEY) {
+      try {
+        completion = await callDeepseekAPI(body, env.DEEPSEEK_API_KEY);
+      } catch (error) {
+        console.error('Deepseek API failed, falling back to mock:', error);
+        // Fallback to mock if API fails
+        completion = mockAICompletion(body);
+        // Simulate delay for consistency
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+    } else {
+      // Use mock if no API key is configured
+      completion = mockAICompletion(body);
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
 
     return new Response(JSON.stringify(completion), {
       status: 200,
