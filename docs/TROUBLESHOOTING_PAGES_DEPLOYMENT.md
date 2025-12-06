@@ -9,14 +9,25 @@ Cloudflare API returned non-200: 403
 API returned: {"success":false,"errors":[{"code":10000,"message":"Authentication error"}]}
 ```
 
-### Root Causes
+### ✅ Solution Applied
 
-This error typically occurs due to one of these issues:
+**The workflow has been updated to use Wrangler CLI instead of `cloudflare/pages-action`.**
+
+This change resolves the authentication issue because:
+- Wrangler uses the same authentication mechanism as Workers deployment (which is already working)
+- It's more consistent with the rest of the deployment pipeline
+- It provides better error messages
+
+The workflow now uses `npm run deploy:pages` which runs `wrangler pages deploy dist --project-name=amei-beauty`.
+
+### Root Causes (If Still Experiencing Issues)
+
+If you still encounter authentication errors, it may be due to:
 
 1. **API Token Missing Pages Permissions** (Most Common)
 2. **API Token Not Set in GitHub Secrets**
 3. **Incorrect Account ID**
-4. **Pages Project Doesn't Exist** (though the action should create it)
+4. **Pages Project Doesn't Exist** (Wrangler will create it automatically if it has permissions)
 
 ---
 
@@ -68,7 +79,7 @@ If your token doesn't have Pages permissions:
 
 ### Step 5: Create Pages Project (If Needed)
 
-The GitHub Action should create the project automatically, but if it doesn't:
+Wrangler CLI will create the project automatically if it doesn't exist (as long as the API token has Pages permissions). However, if you prefer to create it manually:
 
 1. Go to [Cloudflare Dashboard → Workers & Pages](https://dash.cloudflare.com)
 2. Click **"Create application"** → **"Pages"**
@@ -77,26 +88,26 @@ The GitHub Action should create the project automatically, but if it doesn't:
 5. Set build output directory to: `dist`
 6. Save the project
 
-**Note:** If you create it manually, you can still use the GitHub Action for future deployments.
+**Note:** The workflow uses Wrangler CLI (`npm run deploy:pages`), which will work whether the project exists or not (as long as permissions are correct).
 
 ### Step 6: Test Token Permissions Locally (Optional)
 
 You can verify your token works by running:
 
 ```bash
-# Install wrangler if not already installed
-npm install -g wrangler
+# Set environment variables (or use .dev.vars)
+export CLOUDFLARE_API_TOKEN="your-token-here"
+export CLOUDFLARE_ACCOUNT_ID="your-account-id-here"
 
 # Verify token and account
 npx wrangler whoami
 
-# Try to list Pages projects (requires Pages permissions)
-curl -X GET "https://api.cloudflare.com/client/v4/accounts/YOUR_ACCOUNT_ID/pages/projects" \
-  -H "Authorization: Bearer YOUR_API_TOKEN" \
-  -H "Content-Type: application/json"
+# Try deploying Pages locally (this will test Pages permissions)
+npm run build
+npm run deploy:pages
 ```
 
-Replace `YOUR_ACCOUNT_ID` and `YOUR_API_TOKEN` with your actual values.
+If the local deployment works, the GitHub Actions workflow should also work.
 
 ---
 
@@ -115,10 +126,16 @@ Before running the workflow again, verify:
 
 ## Still Having Issues?
 
-1. **Check the workflow logs** - The updated workflow now includes a verification step that will show more detailed error messages
-2. **Try creating a new API token** - Sometimes tokens can become invalid
-3. **Verify token in Cloudflare Dashboard** - Make sure it's active and has all required permissions
-4. **Check Cloudflare Status** - Sometimes Cloudflare APIs have outages
+1. **Check the workflow logs** - The workflow now uses Wrangler CLI which provides detailed error messages
+2. **Verify Workers deployment works** - If Workers deploy successfully, Pages should also work (same token)
+3. **Try creating a new API token** - Sometimes tokens can become invalid
+4. **Verify token in Cloudflare Dashboard** - Make sure it's active and has all required permissions:
+   - Account → Workers Scripts → Edit
+   - Account → Pages → Edit
+   - Account → D1 → Edit
+   - Account → R2 → Edit (if using R2)
+5. **Check Cloudflare Status** - Sometimes Cloudflare APIs have outages
+6. **Test locally** - Run `npm run deploy:pages` locally to see if the issue is with the token or the workflow
 
 ---
 

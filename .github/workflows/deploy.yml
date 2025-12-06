@@ -88,42 +88,9 @@ jobs:
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-      - name: Verify Cloudflare credentials
+      - name: Deploy to Cloudflare Pages
+        run: npm run deploy:pages
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "❌ Error: CLOUDFLARE_API_TOKEN secret is not set"
-            exit 1
-          fi
-          if [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "❌ Error: CLOUDFLARE_ACCOUNT_ID secret is not set"
-            exit 1
-          fi
-          echo "✅ Secrets are set (checking API token permissions...)"
-          # Verify token has Pages permissions by checking if we can list projects
-          response=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects" \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            -H "Content-Type: application/json")
-          if echo "$response" | grep -q '"success":true'; then
-            echo "✅ API token has valid Pages permissions"
-          else
-            echo "❌ Error: API token authentication failed or lacks Pages permissions"
-            echo "Response: $response"
-            echo ""
-            echo "Please ensure:"
-            echo "1. The API token has 'Account → Pages → Edit' permission"
-            echo "2. The token is valid and not expired"
-            echo "3. The Account ID is correct"
-            exit 1
-          fi
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: amei-beauty
-          directory: dist
 
