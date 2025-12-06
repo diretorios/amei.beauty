@@ -1,5 +1,19 @@
 # Troubleshooting Cloudflare Pages Deployment
 
+## Error: "It looks like you've run a Workers-specific command in a Pages project"
+
+If you see this error:
+```
+✘ [ERROR] It looks like you've run a Workers-specific command in a Pages project.
+  For Pages, please run `wrangler pages deploy` instead.
+```
+
+**👉 Quick Fix:** See [FIX_PAGES_DEPLOY_COMMAND.md](./FIX_PAGES_DEPLOY_COMMAND.md)
+
+**Solution:** Remove the deploy command from Cloudflare Pages settings. Pages should only build (`npm run build`) and deploy static files - no deploy command needed.
+
+---
+
 ## Error: "Authentication error" (403) when deploying Pages
 
 If you're seeing this error:

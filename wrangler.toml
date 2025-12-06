@@ -1,12 +1,13 @@
-# Pages configuration (used by Cloudflare Pages GitHub integration)
-name = "amei-beauty"
-pages_build_output_dir = "dist"
-
 # Workers configuration (used by wrangler deploy)
 # Note: When deploying Workers, the name will be "amei-beauty-api" (set via --name flag)
 main = "workers/index.ts"
+name = "amei-beauty-api"  # Default name for Workers (overridden by --name flag in scripts)
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
+
+# Pages configuration (used by Cloudflare Pages GitHub integration)
+# Note: Cloudflare Pages should use wrangler.pages.toml instead, or remove deploy command from Pages settings
+pages_build_output_dir = "dist"
 
 # D1 Database binding
 [[d1_databases]]

@@ -1,0 +1,7 @@
+# Cloudflare Pages configuration
+# This file is used by Cloudflare Pages GitHub integration
+# It should NOT have a 'main' field (which is for Workers)
+
+name = "amei-beauty"
+pages_build_output_dir = "dist"
+
