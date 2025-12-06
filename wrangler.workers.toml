@@ -1,0 +1,32 @@
+# Workers configuration (used by wrangler deploy)
+# This file is used for Workers deployment, separate from Pages config
+
+name = "amei-beauty-api"
+main = "workers/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "amei-beauty-db"
+database_id = "def5a00b-d274-4172-927f-02066e778b97"
+
+# R2 Bucket binding for images
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "amei-beauty-images"
+
+# Environment variables
+[vars]
+ENVIRONMENT = "development"
+
+# Production environment
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+# Routes (for Pages integration)
+# routes = [
+#   { pattern = "amei.beauty/api/*", zone_name = "amei.beauty" }
+# ]
+
