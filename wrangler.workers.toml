@@ -1,5 +1,6 @@
 # Workers configuration (used by wrangler deploy)
 # This file is used for Workers deployment, separate from Pages config
+#
 
 name = "amei-beauty-api"
 main = "workers/index.ts"
