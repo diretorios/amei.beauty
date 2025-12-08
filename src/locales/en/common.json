@@ -13,10 +13,18 @@
     "next": "Next",
     "back": "Back",
     "finish": "Finish",
-    "continue": "Continue"
+    "skip": "Skip",
+    "continue": "Continue",
+    "add_social_networks": "Add Social Networks",
+    "add_personalized_links": "Add Personalized Links",
+    "add_services_and_prices": "Add Services and Prices",
+    "add_portfolio": "Add Portfolio",
+    "add_custom_content": "Add Custom Content"
   },
   "navigation": {
     "profile": "Profile",
+    "edit": "Edit",
+    "directory": "Directory",
     "services": "Services",
     "links": "Links",
     "social": "Social Media",

@@ -95,6 +95,51 @@ export function ProfilePage() {
             {publishedCard && !publishedCard.can_update ? '🔒 ' : ''}
             {t('profile.edit')}
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = '/add-social-networks';
+            }}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+          >
+            {t('buttons.add_social_networks')}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = '/add-personalized-links';
+            }}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+          >
+            {t('buttons.add_personalized_links')}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = '/edit';
+            }}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+          >
+            {t('buttons.add_services_and_prices')}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = '/edit';
+            }}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+          >
+            {t('buttons.add_portfolio')}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = '/edit';
+            }}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+          >
+            {t('buttons.add_custom_content')}
+          </Button>
           <PublishButton
             card={card}
             onPublished={async (publishedCard) => {

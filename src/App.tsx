@@ -8,6 +8,8 @@ import { ProfilePage } from './pages/ProfilePage';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { PublicCardPage } from './pages/PublicCardPage';
 import { EditPage } from './pages/EditPage';
+import { AddSocialNetworksPage } from './pages/AddSocialNetworksPage';
+import { AddPersonalizedLinksPage } from './pages/AddPersonalizedLinksPage';
 
 export function App() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -69,6 +71,8 @@ export function App() {
       <Router onChange={(e) => setCurrentPath(e.url)}>
         <Route path="/" component={ProfilePage} />
         <Route path="/edit" component={EditPage} />
+        <Route path="/add-social-networks" component={AddSocialNetworksPage} />
+        <Route path="/add-personalized-links" component={AddPersonalizedLinksPage} />
         <Route path="/directory" component={DirectoryPage} />
         <Route
           path="/card/:cardId"
@@ -78,7 +82,7 @@ export function App() {
           path="/:username"
           component={(props: { username: string }) => {
             // Don't match routes that start with known paths
-            if (props.username === 'directory' || props.username === 'card' || props.username === 'edit') {
+            if (props.username === 'directory' || props.username === 'card' || props.username === 'edit' || props.username === 'add-social-networks' || props.username === 'add-personalized-links') {
               return null;
             }
             return <PublicCardPage username={props.username} />;

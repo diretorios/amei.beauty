@@ -31,6 +31,7 @@
   "step5": {
     "title": "Conte mais sobre você",
     "description": "Essas informações são opcionais, mas ajudam seus clientes a conhecerem você melhor",
+    "add_social": "Adicionar Redes Sociais",
     "bio": {
       "label": "Algo sobre você",
       "placeholder": "Conte um pouco sobre você, sua experiência ou especialidades...",
@@ -41,6 +42,55 @@
       "placeholder": "https://seusite.com.br",
       "help": "Link para seu site ou portfólio (opcional)"
     }
+  },
+  "step6": {
+    "title": "Adicione suas redes sociais",
+    "description": "Compartilhe seus perfis de redes sociais para que os clientes possam acompanhar seu trabalho (opcional)",
+    "add_links": "Adicionar Links Personalizados",
+    "instagram": {
+      "label": "Instagram",
+      "placeholder": "@seuusuario",
+      "help": "Seu nome de usuário do Instagram sem @"
+    },
+    "facebook": {
+      "label": "Facebook",
+      "placeholder": "seuusuario",
+      "help": "Seu nome de usuário ou página do Facebook"
+    },
+    "tiktok": {
+      "label": "TikTok",
+      "placeholder": "@seuusuario",
+      "help": "Seu nome de usuário do TikTok sem @"
+    },
+    "youtube": {
+      "label": "YouTube",
+      "placeholder": "@seucanal",
+      "help": "O handle do seu canal do YouTube sem @"
+    }
+  },
+  "step7": {
+    "title": "Adicione links personalizados",
+    "description": "Adicione links adicionais que você deseja compartilhar, como portfólios, páginas de agendamento ou outros recursos (opcional)",
+    "label": {
+      "label": "Rótulo do link",
+      "placeholder": "Ex: Portfólio, Agendamento, Blog",
+      "help": "Um nome curto para este link"
+    },
+    "type": {
+      "label": "Tipo de link",
+      "options": {
+        "http": "Site (http/https)",
+        "mailto": "E-mail",
+        "nostr": "Nostr",
+        "custom": "Personalizado"
+      }
+    },
+    "value": {
+      "label": "URL do link ou e-mail",
+      "placeholder": "https://exemplo.com ou email@exemplo.com",
+      "help": "Digite a URL completa ou endereço de e-mail"
+    },
+    "add_button": "Adicionar Link"
   },
   "complete": {
     "title": "Pronto!",

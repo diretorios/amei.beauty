@@ -31,6 +31,7 @@
   "step5": {
     "title": "Tell us more about you",
     "description": "This information is optional, but helps your clients get to know you better",
+    "add_social": "Add Social Networks",
     "bio": {
       "label": "Something about you",
       "placeholder": "Tell us a bit about yourself, your experience or specialties...",
@@ -41,6 +42,55 @@
       "placeholder": "https://yoursite.com",
       "help": "Link to your website or portfolio (optional)"
     }
+  },
+  "step6": {
+    "title": "Add your social networks",
+    "description": "Share your social media profiles so clients can follow your work (optional)",
+    "add_links": "Add Personalized Links",
+    "instagram": {
+      "label": "Instagram",
+      "placeholder": "@yourusername",
+      "help": "Your Instagram username without @"
+    },
+    "facebook": {
+      "label": "Facebook",
+      "placeholder": "yourusername",
+      "help": "Your Facebook username or page name"
+    },
+    "tiktok": {
+      "label": "TikTok",
+      "placeholder": "@yourusername",
+      "help": "Your TikTok username without @"
+    },
+    "youtube": {
+      "label": "YouTube",
+      "placeholder": "@yourchannel",
+      "help": "Your YouTube channel handle without @"
+    }
+  },
+  "step7": {
+    "title": "Add personalized links",
+    "description": "Add any additional links you want to share, such as portfolios, booking pages, or other resources (optional)",
+    "label": {
+      "label": "Link label",
+      "placeholder": "e.g., Portfolio, Booking, Blog",
+      "help": "A short name for this link"
+    },
+    "type": {
+      "label": "Link type",
+      "options": {
+        "http": "Website (http/https)",
+        "mailto": "Email",
+        "nostr": "Nostr",
+        "custom": "Custom"
+      }
+    },
+    "value": {
+      "label": "Link URL or email",
+      "placeholder": "https://example.com or email@example.com",
+      "help": "Enter the full URL or email address"
+    },
+    "add_button": "Add Link"
   },
   "complete": {
     "title": "Done!",

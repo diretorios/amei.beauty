@@ -13,10 +13,18 @@
     "next": "Siguiente",
     "back": "Atrás",
     "finish": "Finalizar",
-    "continue": "Continuar"
+    "skip": "Omitir",
+    "continue": "Continuar",
+    "add_social_networks": "Agregar Redes Sociales",
+    "add_personalized_links": "Agregar Enlaces Personalizados",
+    "add_services_and_prices": "Agregar Servicios y Precios",
+    "add_portfolio": "Agregar Portafolio",
+    "add_custom_content": "Agregar Contenido Personalizado"
   },
   "navigation": {
     "profile": "Perfil",
+    "edit": "Editar",
+    "directory": "Directorio",
     "services": "Servicios",
     "links": "Enlaces",
     "social": "Redes Sociales",

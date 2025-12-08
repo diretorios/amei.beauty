@@ -4,7 +4,7 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 import { Textarea } from '../components/Textarea';
 import { storage } from '../lib/storage';
-import type { Profile, CardData } from '../models/types';
+import type { Profile, CardData, SocialLink, CustomLink } from '../models/types';
 
 interface OnboardingPageProps {
   onComplete: () => void;
@@ -23,6 +23,12 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
     bio: '',
     website: '',
   });
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [socialHandles, setSocialHandles] = useState<Record<string, string>>({});
+  const [customLinks, setCustomLinks] = useState<CustomLink[]>([]);
+  const [newLinkLabel, setNewLinkLabel] = useState('');
+  const [newLinkValue, setNewLinkValue] = useState('');
+  const [newLinkType, setNewLinkType] = useState<'http' | 'mailto' | 'nostr' | 'custom'>('http');
 
   // Load existing card data if editing
   useEffect(() => {
@@ -36,6 +42,15 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
         bio: initialCard.profile.bio || '',
         website: initialCard.profile.website || '',
       });
+      const social = initialCard.social || [];
+      setSocialLinks(social);
+      // Initialize handles from existing social links
+      const handles: Record<string, string> = {};
+      social.forEach(link => {
+        handles[link.platform] = link.handle;
+      });
+      setSocialHandles(handles);
+      setCustomLinks(initialCard.links || []);
     }
   }, [initialCard]);
 
@@ -52,6 +67,8 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
         bio: profile.bio || '',
         website: profile.website || '',
       },
+      social: socialLinks,
+      links: customLinks,
       updated_at: new Date().toISOString(),
     } : {
       profile: {
@@ -63,8 +80,8 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
         bio: profile.bio || '',
         website: profile.website || '',
       },
-      social: [],
-      links: [],
+      social: socialLinks,
+      links: customLinks,
       services: [],
       ratings: [],
       testimonials: [],
@@ -96,10 +113,10 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
   };
 
   const handleNext = async () => {
-    if (step < 5) {
+    if (step < 7) {
       setStep(step + 1);
-    } else if (step === 5) {
-      // After optional bio/website step, save and complete onboarding
+    } else if (step === 7) {
+      // After personalized links step, save and complete onboarding
       await saveAndComplete();
     }
   };
@@ -133,9 +150,87 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
         return true; // Photo is optional
       case 5:
         return true; // Bio and website are optional
+      case 6:
+        return true; // Social networks are optional
+      case 7:
+        return true; // Personalized links are optional
       default:
         return false;
     }
+  };
+
+  const handleSocialHandleChange = (platform: string, handle: string) => {
+    // Update the handle state
+    setSocialHandles({ ...socialHandles, [platform]: handle });
+    
+    // Update or remove the social link
+    if (handle.trim()) {
+      const url = generateSocialUrl(platform, handle);
+      const existingIndex = socialLinks.findIndex(link => link.platform === platform);
+      if (existingIndex >= 0) {
+        const updated = [...socialLinks];
+        updated[existingIndex] = { platform, handle: handle.trim(), url };
+        setSocialLinks(updated);
+      } else {
+        setSocialLinks([...socialLinks, { platform, handle: handle.trim(), url }]);
+      }
+    } else {
+      // Remove if handle is empty
+      setSocialLinks(socialLinks.filter(link => link.platform !== platform));
+    }
+  };
+
+  const handleRemoveSocialLink = (platform: string) => {
+    setSocialLinks(socialLinks.filter(link => link.platform !== platform));
+    const updatedHandles = { ...socialHandles };
+    delete updatedHandles[platform];
+    setSocialHandles(updatedHandles);
+  };
+
+  const generateSocialUrl = (platform: string, handle: string): string => {
+    const cleanHandle = handle.trim().replace(/^@/, '');
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return `https://instagram.com/${cleanHandle}`;
+      case 'facebook':
+        return `https://facebook.com/${cleanHandle}`;
+      case 'tiktok':
+        return `https://tiktok.com/@${cleanHandle}`;
+      case 'twitter':
+      case 'x':
+        return `https://x.com/${cleanHandle}`;
+      case 'youtube':
+        return `https://youtube.com/@${cleanHandle}`;
+      default:
+        return `https://${platform.toLowerCase()}.com/${cleanHandle}`;
+    }
+  };
+
+  const handleAddCustomLink = () => {
+    if (!newLinkLabel.trim() || !newLinkValue.trim()) return;
+    
+    // Validate URL based on type
+    let validatedValue = newLinkValue.trim();
+    if (newLinkType === 'http' && !validatedValue.startsWith('http://') && !validatedValue.startsWith('https://')) {
+      validatedValue = `https://${validatedValue}`;
+    } else if (newLinkType === 'mailto' && !validatedValue.startsWith('mailto:')) {
+      validatedValue = `mailto:${validatedValue}`;
+    }
+    
+    const newLink: CustomLink = {
+      label: newLinkLabel.trim(),
+      type: newLinkType,
+      value: validatedValue,
+    };
+    
+    setCustomLinks([...customLinks, newLink]);
+    setNewLinkLabel('');
+    setNewLinkValue('');
+    setNewLinkType('http');
+  };
+
+  const handleRemoveCustomLink = (index: number) => {
+    setCustomLinks(customLinks.filter((_, i) => i !== index));
   };
 
   return (
@@ -254,6 +349,136 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
               />
             </div>
           )}
+
+          {step === 6 && (
+            <div className="onboarding-step">
+              <h2>{t('onboarding.step6.title')}</h2>
+              <p className="onboarding-step-description">{t('onboarding.step6.description')}</p>
+              
+              {['instagram', 'facebook', 'tiktok', 'youtube'].map((platform) => {
+                const existingLink = socialLinks.find(link => link.platform === platform);
+                const handle = socialHandles[platform] || existingLink?.handle || '';
+                
+                return (
+                  <div key={platform} className="social-link-input" style={{ marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
+                      <div style={{ flex: 1 }}>
+                        <Input
+                          id={`social-${platform}`}
+                          labelKey={`onboarding.step6.${platform}.label`}
+                          placeholder={t(`onboarding.step6.${platform}.placeholder`)}
+                          helpKey={existingLink ? undefined : `onboarding.step6.${platform}.help`}
+                          value={handle}
+                          onInput={(e) => {
+                            const value = (e.target as HTMLInputElement).value;
+                            handleSocialHandleChange(platform, value);
+                          }}
+                        />
+                      </div>
+                      {existingLink && (
+                        <Button
+                          variant="outline"
+                          onClick={() => handleRemoveSocialLink(platform)}
+                          style={{ marginBottom: '0.5rem' }}
+                        >
+                          {t('buttons.delete')}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {step === 7 && (
+            <div className="onboarding-step">
+              <h2>{t('onboarding.step7.title')}</h2>
+              <p className="onboarding-step-description">{t('onboarding.step7.description')}</p>
+              
+              {/* Existing links */}
+              {customLinks.length > 0 && (
+                <div className="custom-links-list" style={{ marginBottom: '1.5rem' }}>
+                  {customLinks.map((link, index) => (
+                    <div key={index} className="custom-link-item" style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center',
+                      padding: '0.75rem',
+                      marginBottom: '0.5rem',
+                      border: '1px solid var(--border-color, #e5e7eb)',
+                      borderRadius: '0.5rem'
+                    }}>
+                      <div>
+                        <strong>{link.label}</strong>
+                        <span style={{ marginLeft: '0.5rem', color: 'var(--text-secondary, #6b7280)' }}>
+                          ({link.type})
+                        </span>
+                        <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary, #6b7280)' }}>
+                          {link.value}
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => handleRemoveCustomLink(index)}
+                      >
+                        {t('buttons.delete')}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add new link form */}
+              <div className="add-link-form">
+                <Input
+                  id="link-label"
+                  labelKey="onboarding.step7.label.label"
+                  placeholder={t('onboarding.step7.label.placeholder')}
+                  helpKey="onboarding.step7.label.help"
+                  value={newLinkLabel}
+                  onInput={(e) => setNewLinkLabel((e.target as HTMLInputElement).value)}
+                />
+                
+                <div style={{ marginBottom: '1rem' }}>
+                  <label htmlFor="link-type" className="input-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
+                    {t('onboarding.step7.type.label')}
+                  </label>
+                  <select
+                    id="link-type"
+                    value={newLinkType}
+                    onChange={(e) => setNewLinkType(e.target.value as 'http' | 'mailto' | 'nostr' | 'custom')}
+                    className="input"
+                    style={{ width: '100%' }}
+                  >
+                    <option value="http">{t('onboarding.step7.type.options.http')}</option>
+                    <option value="mailto">{t('onboarding.step7.type.options.mailto')}</option>
+                    <option value="nostr">{t('onboarding.step7.type.options.nostr')}</option>
+                    <option value="custom">{t('onboarding.step7.type.options.custom')}</option>
+                  </select>
+                </div>
+
+                <Input
+                  id="link-value"
+                  labelKey="onboarding.step7.value.label"
+                  placeholder={t('onboarding.step7.value.placeholder')}
+                  helpKey="onboarding.step7.value.help"
+                  value={newLinkValue}
+                  onInput={(e) => setNewLinkValue((e.target as HTMLInputElement).value)}
+                  type={newLinkType === 'mailto' ? 'email' : 'url'}
+                />
+
+                <Button
+                  variant="primary"
+                  onClick={handleAddCustomLink}
+                  disabled={!newLinkLabel.trim() || !newLinkValue.trim()}
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  {t('onboarding.step7.add_button')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="onboarding-actions">
@@ -262,9 +487,28 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
               {t('buttons.back')}
             </Button>
           )}
-          <Button variant="primary" onClick={handleNext} disabled={!isStepValid()}>
-            {step === 5 ? t('buttons.finish') || t('buttons.next') : t('buttons.next')}
-          </Button>
+          {step === 5 ? (
+            <Button variant="primary" onClick={saveAndComplete}>
+              {t('buttons.finish')}
+            </Button>
+          ) : step === 6 ? (
+            <Button variant="primary" onClick={() => setStep(7)}>
+              {t('buttons.next')}
+            </Button>
+          ) : step === 7 ? (
+            <>
+              <Button variant="primary" disabled>
+                {t('onboarding.step6.add_links')}
+              </Button>
+              <Button variant="outline" onClick={saveAndComplete}>
+                {t('buttons.finish')}
+              </Button>
+            </>
+          ) : (
+            <Button variant="primary" onClick={handleNext} disabled={!isStepValid()}>
+              {t('buttons.next')}
+            </Button>
+          )}
         </div>
       </div>
     </div>
