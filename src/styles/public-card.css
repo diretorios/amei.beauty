@@ -112,6 +112,35 @@
   font-style: italic;
 }
 
+.card-social-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.social-icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-700);
+  transition: transform var(--transition-fast), color var(--transition-fast);
+  text-decoration: none;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-md);
+}
+
+.social-icon-link:hover {
+  transform: scale(1.1);
+  color: var(--color-primary);
+}
+
+.social-icon-link:active {
+  transform: scale(0.95);
+}
+
 .card-bio {
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);

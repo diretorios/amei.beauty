@@ -2,6 +2,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { openWhatsApp } from '../lib/whatsapp';
 import type { CardData, PublishedCard } from '../models/types';
 import { WhatsAppIcon } from './WhatsAppIcon';
+import { SocialIcon } from './SocialIcon';
 
 interface CardDisplayProps {
   card: CardData | PublishedCard;
@@ -49,6 +50,24 @@ export function CardDisplay({ card, showWhatsAppButton = true, isPreview = false
         </div>
         {card.profile.headline && <p className="headline">{card.profile.headline}</p>}
       </div>
+
+      {isPreview && card.social.length > 0 && (
+        <div className="card-social-icons">
+          {card.social.map((social, index) => (
+            <a
+              key={index}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-icon-link"
+              aria-label={`${social.platform}: ${social.handle}`}
+              title={`${social.platform}: ${social.handle}`}
+            >
+              <SocialIcon platform={social.platform} size={24} />
+            </a>
+          ))}
+        </div>
+      )}
 
       {card.profile.bio && (
         <div className="card-bio">
@@ -112,7 +131,7 @@ export function CardDisplay({ card, showWhatsAppButton = true, isPreview = false
         </div>
       )}
 
-      {card.social.length > 0 && (
+      {!isPreview && card.social.length > 0 && (
         <div className="card-social">
           <h2>{t('navigation.social')}</h2>
           <ul>
