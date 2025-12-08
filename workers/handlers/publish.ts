@@ -5,6 +5,8 @@
 
 import type { Env } from '../types';
 import { generateCardId, generateReferralCode, cardToRow, validateCard, rowToCard } from '../utils';
+import { generateOwnerToken, hashToken, extractTokenFromHeader } from '../utils/auth';
+import { verifyCardOwnership } from '../middleware/auth';
 import type { PublishedCard } from '../../src/models/types';
 
 export async function handlePublish(
@@ -85,6 +87,63 @@ export async function handlePublish(
       }
     }
 
+    // Handle authentication and token generation
+    let ownerToken: string | null = null;
+    let ownerTokenHash: string | null = null;
+
+    // Check if this is a new card or updating existing
+    const existingCard = await env.DB.prepare('SELECT id, owner_token_hash FROM cards WHERE id = ?')
+      .bind(card.id)
+      .first<{ id: string; owner_token_hash: string | null }>();
+
+    if (!existingCard) {
+      // New card - generate token
+      ownerToken = await generateOwnerToken();
+      const secret = env.AUTH_SECRET || 'default-secret-change-in-production';
+      ownerTokenHash = await hashToken(ownerToken, secret);
+    } else if (existingCard.owner_token_hash) {
+      // Existing card with auth - require token
+      const authHeader = request.headers.get('Authorization');
+      const token = extractTokenFromHeader(authHeader);
+      
+      if (!token) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Unauthorized',
+            message: 'This card requires authentication. Please provide an Authorization header.'
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+      
+      // Verify token
+      const { valid } = await verifyCardOwnership(card.id, request, env);
+      
+      if (!valid) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Unauthorized',
+            message: 'Invalid authentication token'
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+      
+      // Keep existing token hash
+      ownerTokenHash = existingCard.owner_token_hash;
+    } else {
+      // Legacy card being republished - generate new token
+      ownerToken = await generateOwnerToken();
+      const secret = env.AUTH_SECRET || 'default-secret-change-in-production';
+      ownerTokenHash = await hashToken(ownerToken, secret);
+    }
+
     // Convert to row
     const row = cardToRow(card);
     const updatedAt = Date.now();
@@ -96,8 +155,8 @@ export async function handlePublish(
         ratings_json, testimonials_json, client_photos_json, badges_json,
         certifications_json, recommendations_json, location_json, referral_code,
         published_at, updated_at, is_active, is_featured, subscription_tier,
-        free_period_end, updates_enabled_until, endorsement_count, can_update, payment_status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        free_period_end, updates_enabled_until, endorsement_count, can_update, payment_status, owner_token_hash
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO UPDATE SET
         username = excluded.username,
         profile_json = excluded.profile_json,
@@ -119,7 +178,8 @@ export async function handlePublish(
         updates_enabled_until = excluded.updates_enabled_until,
         endorsement_count = excluded.endorsement_count,
         can_update = excluded.can_update,
-        payment_status = excluded.payment_status
+        payment_status = excluded.payment_status,
+        owner_token_hash = COALESCE(excluded.owner_token_hash, cards.owner_token_hash)
       `
     )
       .bind(
@@ -146,7 +206,8 @@ export async function handlePublish(
         row.updates_enabled_until,
         row.endorsement_count,
         row.can_update,
-        row.payment_status
+        row.payment_status,
+        ownerTokenHash
       )
       .run();
 
@@ -161,7 +222,14 @@ export async function handlePublish(
 
     const publishedCard = rowToCard(result);
 
-    return new Response(JSON.stringify(publishedCard), {
+    // Return the token in the response (only for new cards or legacy cards being upgraded)
+    const response: any = { ...publishedCard };
+    if (ownerToken) {
+      response.owner_token = ownerToken; // Include token in response
+      response.token_warning = 'Save this token securely. You will need it to update or delete this card.';
+    }
+
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

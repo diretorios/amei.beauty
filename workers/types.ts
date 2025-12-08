@@ -11,6 +11,7 @@ export interface Env {
   SERPAPI_API_KEY?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
+  AUTH_SECRET?: string; // Secret key for hashing owner tokens
 }
 
 export interface CardRow {
@@ -43,5 +44,6 @@ export interface CardRow {
   payment_date: number | null;
   payment_amount: number | null;
   payment_currency: string | null;
+  owner_token_hash: string | null;
 }
 

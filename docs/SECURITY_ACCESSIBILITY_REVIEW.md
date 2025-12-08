@@ -4,6 +4,12 @@
 **Reviewer**: AI Code Review  
 **Scope**: Full codebase security and accessibility audit
 
+> **📌 NOTE**: This is an initial review document. For comprehensive, up-to-date security and accessibility documentation, please refer to:
+> - **[SECURITY_REVIEW_2024.md](./SECURITY_REVIEW_2024.md)** - Comprehensive security audit with detailed findings
+> - **[SECURITY_TESTING_REQUIREMENTS.md](./SECURITY_TESTING_REQUIREMENTS.md)** - Complete security testing requirements
+> - **[ACCESSIBILITY_TESTING_REQUIREMENTS.md](./ACCESSIBILITY_TESTING_REQUIREMENTS.md)** - Complete accessibility testing requirements
+> - **[SECURITY_ACCESSIBILITY_SUMMARY.md](./SECURITY_ACCESSIBILITY_SUMMARY.md)** - Executive summary and quick reference
+
 ---
 
 ## 🔴 CRITICAL SECURITY ISSUES

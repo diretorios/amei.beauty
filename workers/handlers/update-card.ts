@@ -5,6 +5,7 @@
 
 import type { Env } from '../types';
 import { cardToRow, validateCard, rowToCard } from '../utils';
+import { verifyCardOwnership } from '../middleware/auth';
 import type { PublishedCard } from '../../src/models/types';
 
 export async function handleUpdateCard(
@@ -29,6 +30,29 @@ export async function handleUpdateCard(
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       );
+    }
+
+    // Verify ownership
+    const { valid, isLegacy } = await verifyCardOwnership(id, request, env);
+
+    if (!valid) {
+      if (isLegacy) {
+        // Legacy card - allow update but warn user to republish for security
+        // (Optional: you can require republishing for legacy cards)
+        // For now, we'll allow it but log it
+        console.warn(`Legacy card ${id} updated without authentication`);
+      } else {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Unauthorized',
+            message: 'Invalid or missing authentication token'
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
     }
 
     // Check if updates are allowed

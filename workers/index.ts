@@ -57,7 +57,7 @@ export default {
 
       if (path.startsWith('/api/card/') && method === 'DELETE') {
         const id = path.split('/api/card/')[1];
-        return handleDeleteCard(id, env, corsHeaders);
+        return handleDeleteCard(id, request, env, corsHeaders);
       }
 
       if (path === '/api/search' && method === 'GET') {

@@ -4,6 +4,7 @@
  */
 
 import type { PublishedCard, CardData } from '../models/types';
+import { getAuthHeader, storeOwnerToken } from './auth';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
@@ -21,15 +22,27 @@ class ApiError extends Error {
 
 async function fetchApi(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  cardId?: string
 ): Promise<Response> {
   const url = `${API_BASE_URL}${endpoint}`;
+  
+  // Add Authorization header if cardId is provided
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+  
+  if (cardId) {
+    const authHeader = getAuthHeader(cardId);
+    if (authHeader) {
+      headers['Authorization'] = authHeader;
+    }
+  }
+  
   const response = await fetch(url, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
 
   if (!response.ok) {
@@ -58,12 +71,20 @@ export const api = {
       subscription_tier: 'free',
     };
 
+    // Pass card ID for auth only if card already has an ID (republishing existing card)
     const response = await fetchApi('/publish', {
       method: 'POST',
       body: JSON.stringify(publishedCard),
-    });
+    }, card.id || undefined); // Only pass if card has ID (for republishing)
 
-    return response.json();
+    const publishedCardData = await response.json();
+    
+    // Store token if returned in response (for new cards or legacy cards being upgraded)
+    if (publishedCardData.owner_token) {
+      storeOwnerToken(publishedCardData.id, publishedCardData.owner_token);
+    }
+    
+    return publishedCardData;
   },
 
   /**
@@ -81,7 +102,7 @@ export const api = {
     const response = await fetchApi(`/card/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
-    });
+    }, id); // Pass card ID for auth
 
     return response.json();
   },
@@ -92,7 +113,7 @@ export const api = {
   async unpublish(id: string): Promise<void> {
     await fetchApi(`/card/${id}`, {
       method: 'DELETE',
-    });
+    }, id); // Pass card ID for auth
   },
 
   /**

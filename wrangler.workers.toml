@@ -29,11 +29,15 @@ ENVIRONMENT = "development"
 # For Cloudflare Workers (this file):
 #   npx wrangler secret put DEEPSEEK_API_KEY
 #   npx wrangler secret put SERPAPI_API_KEY
+#   npx wrangler secret put AUTH_SECRET
 #   npx wrangler secret put ALLOWED_ORIGINS
 # For Cloudflare Pages:
 #   npx wrangler pages secret put DEEPSEEK_API_KEY
 #   npx wrangler pages secret put SERPAPI_API_KEY
 # Secrets are not stored in this file for security reasons
+# 
+# AUTH_SECRET: Generate with: openssl rand -base64 32
+# This secret is used to hash owner tokens. Keep it secure!
 
 # Production environment
 [env.production]
