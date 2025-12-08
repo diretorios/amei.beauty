@@ -34,10 +34,12 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
   const [isPublished, setIsPublished] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [username, setUsername] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleCancel = () => {
     setShowModal(false);
     setUsername('');
+    setError(null);
   };
 
   // Handle Escape key to close modal and focus management
@@ -70,22 +72,44 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
 
   const handlePublish = async () => {
     setIsPublishing(true);
-    setShowModal(false);
+    setError(null);
 
     try {
+      // Check API URL configuration in production
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
+      if (import.meta.env.PROD && API_BASE_URL.includes('localhost')) {
+        throw new Error('API URL not configured. Please contact support.');
+      }
+
       const publishedCard = await api.publish(card, username.trim() || undefined);
       
       // Save published card ID to local storage
       await storage.setPreference('published_card_id', publishedCard.id);
       
       setIsPublished(true);
+      setShowModal(false);
       setUsername('');
+      setError(null);
       onPublished?.(publishedCard);
     } catch (error) {
       console.error('Publish error:', error);
       const apiError = error instanceof ApiError 
         ? error 
         : new Error(error instanceof Error ? error.message : 'Failed to publish');
+      
+      // Set visible error message
+      let errorMessage = apiError.message;
+      if (apiError instanceof ApiError) {
+        if (apiError.status === 0 || apiError.status === 500) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (apiError.status === 401) {
+          errorMessage = 'Authentication failed. Please try again.';
+        } else if (apiError.status === 409) {
+          errorMessage = 'Username already taken. Please choose a different username.';
+        }
+      }
+      
+      setError(errorMessage);
       onError?.(apiError);
     } finally {
       setIsPublishing(false);
@@ -102,6 +126,19 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
 
   return (
     <>
+      {error && !showModal && (
+        <div className="error-message" role="alert" style={{
+          padding: '0.75rem',
+          marginBottom: '1rem',
+          backgroundColor: '#fee2e2',
+          border: '1px solid #fca5a5',
+          borderRadius: '0.375rem',
+          color: '#991b1b',
+          fontSize: '0.875rem'
+        }}>
+          {error}
+        </div>
+      )}
       <Button
         variant="primary"
         onClick={handlePublishClick}
@@ -127,11 +164,27 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
             <p className="modal-description">
               {t('profile.fields.username') || 'Username (optional)'}
             </p>
+            {error && (
+              <div className="error-message" role="alert" style={{
+                padding: '0.75rem',
+                marginBottom: '1rem',
+                backgroundColor: '#fee2e2',
+                border: '1px solid #fca5a5',
+                borderRadius: '0.375rem',
+                color: '#991b1b',
+                fontSize: '0.875rem'
+              }}>
+                {error}
+              </div>
+            )}
             <Input
               id="publish-username"
               type="text"
               value={username}
-              onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
+              onInput={(e) => {
+                setUsername((e.target as HTMLInputElement).value);
+                setError(null); // Clear error when user types
+              }}
               placeholder={t('profile.fields.username') || 'Username (optional)'}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !isPublishing) {

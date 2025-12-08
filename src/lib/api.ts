@@ -55,10 +55,25 @@ async function fetchApi(
     }
   }
   
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    });
+  } catch (error) {
+    // Network error (CORS, connection refused, etc.)
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'Network error. Please check your connection.';
+    throw new ApiError(
+      errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')
+        ? 'Unable to connect to server. Please check your internet connection and try again.'
+        : errorMessage,
+      0, // Status 0 indicates network error
+      error
+    );
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({
