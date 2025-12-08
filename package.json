@@ -22,7 +22,8 @@
     "verify:config": "./scripts/verify-production-config.sh",
     "check:api-url": "node scripts/check-api-url.js",
     "test:production-api": "node scripts/test-production-api.js",
-    "get:workers-url": "bash scripts/get-workers-url.sh"
+    "get:workers-url": "bash scripts/get-workers-url.sh",
+    "check:cors": "bash scripts/check-cors.sh"
   },
   "dependencies": {
     "preact": "^10.19.0",
