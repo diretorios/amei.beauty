@@ -148,6 +148,14 @@
   border-radius: var(--radius-md);
 }
 
+.card-preview-mode .card-bio {
+  text-align: center;
+}
+
+.card-preview-mode .card-bio p {
+  text-align: center;
+}
+
 .card-website {
   margin-bottom: var(--spacing-xl);
   text-align: center;
