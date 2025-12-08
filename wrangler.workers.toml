@@ -18,9 +18,21 @@ database_id = "def5a00b-d274-4172-927f-02066e778b97"
 binding = "IMAGES"
 bucket_name = "amei-beauty-images"
 
+# KV Namespace for rate limiting
+# NOTE: This KV namespace can be shared across multiple Workers/applications.
+# Each application should set RATE_LIMIT_APP_PREFIX to a unique value to avoid key conflicts.
+# If sharing, use the existing namespace ID from your other application.
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "YOUR_KV_NAMESPACE_ID"  # Use existing namespace ID if sharing
+preview_id = "YOUR_KV_PREVIEW_ID"  # Use existing preview ID if sharing
+
 # Environment variables
 [vars]
 ENVIRONMENT = "development"
+# RATE_LIMIT_APP_PREFIX: Unique prefix for rate limit keys (defaults to 'amei-beauty')
+# Set this if sharing RATE_LIMIT_KV namespace with other applications to avoid key conflicts
+# RATE_LIMIT_APP_PREFIX = "amei-beauty"
 # CORS: Set ALLOWED_ORIGINS as comma-separated list (e.g., "https://amei.beauty,https://www.amei.beauty")
 # Leave unset or use "*" for development (allows all origins)
 # For production, set via: npx wrangler secret put ALLOWED_ORIGINS --config wrangler.workers.toml

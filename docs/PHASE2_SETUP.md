@@ -45,7 +45,28 @@ npx wrangler r2 bucket create amei-beauty-images
 
 The bucket name is already configured in `wrangler.toml`.
 
-### 5. Run Database Migrations
+### 5. Create KV Namespace for Rate Limiting
+
+```bash
+# Create production namespace
+npx wrangler kv:namespace create "RATE_LIMIT_KV"
+
+# Create preview namespace (for local development)
+npx wrangler kv:namespace create "RATE_LIMIT_KV" --preview
+```
+
+**Important**: Copy the `id` and `preview_id` from the output and update `wrangler.workers.toml`:
+
+```toml
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "YOUR_KV_NAMESPACE_ID_HERE"  # ← Paste production ID here
+preview_id = "YOUR_KV_PREVIEW_ID_HERE"  # ← Paste preview ID here
+```
+
+**Note**: Rate limiting will gracefully degrade if KV is not configured (allows all requests with a warning). This is intentional for development environments.
+
+### 6. Run Database Migrations
 
 ```bash
 npm run d1:migrate
@@ -58,14 +79,14 @@ npx wrangler d1 migrations apply amei-beauty-db
 
 This creates the `cards` table and indexes.
 
-### 6. Configure R2 Public Access (Optional)
+### 7. Configure R2 Public Access (Optional)
 
 To serve images publicly, configure R2 custom domain:
 1. Go to Cloudflare Dashboard → R2
 2. Select `amei-beauty-images` bucket
 3. Configure public access or custom domain
 
-### 7. Set Environment Variables
+### 8. Set Environment Variables
 
 Create `.dev.vars` file (for local development):
 
@@ -78,7 +99,7 @@ Edit `.dev.vars`:
 ENVIRONMENT=development
 ```
 
-### 8. Test Locally
+### 9. Test Locally
 
 #### Option A: Run Workers Only
 
@@ -99,7 +120,7 @@ This requires `concurrently` package (add if needed):
 npm install -D concurrently
 ```
 
-### 9. Test API Endpoints
+### 10. Test API Endpoints
 
 ```bash
 # Health check
@@ -108,7 +129,7 @@ curl http://localhost:8787/api/health
 # Should return: {"status":"ok","timestamp":...}
 ```
 
-### 10. Update Frontend API URL
+### 11. Update Frontend API URL
 
 In production, set `VITE_API_URL` environment variable:
 
@@ -176,6 +197,10 @@ npx wrangler d1 execute amei-beauty-db --command "SELECT * FROM cards LIMIT 5"
 3. **R2**: [dash.cloudflare.com → R2](https://dash.cloudflare.com)
    - Should see `amei-beauty-images` bucket
    - Upload test image to verify
+
+4. **KV**: [dash.cloudflare.com → Workers & Pages → KV](https://dash.cloudflare.com)
+   - Should see `RATE_LIMIT_KV` namespace
+   - Used for rate limiting (prevents API abuse)
 
 ## Troubleshooting
 

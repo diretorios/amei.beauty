@@ -5,8 +5,10 @@
 export interface Env {
   DB: D1Database;
   IMAGES: R2Bucket;
+  RATE_LIMIT_KV?: KVNamespace; // KV namespace for rate limiting (can be shared across apps)
   ENVIRONMENT: string;
   ALLOWED_ORIGINS?: string; // Comma-separated list of allowed origins
+  RATE_LIMIT_APP_PREFIX?: string; // Prefix for rate limit keys (defaults to 'amei-beauty')
   DEEPSEEK_API_KEY?: string;
   SERPAPI_API_KEY?: string;
   STRIPE_SECRET_KEY?: string;

@@ -4,3 +4,8 @@
 
 name = "amei-beauty"
 pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "4a757bc6c1ed4cd297a88492db23e86c"  # ← Use your existing ID
+preview_id = "e7ec951de82742b1bfc91419f7c9a557"  # ← Use your existing preview ID

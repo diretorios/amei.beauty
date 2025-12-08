@@ -14,6 +14,12 @@ import { handleUploadImage } from './handlers/upload-image';
 import { handleDetectLocation } from './handlers/detect-location';
 import { handleEndorse } from './handlers/endorse';
 import { handlePaymentCheckout, handlePaymentWebhook } from './handlers/payment';
+import {
+  checkRateLimit,
+  createRateLimitResponse,
+  getEndpointType,
+  RATE_LIMITS,
+} from './middleware/rate-limit';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -34,9 +40,26 @@ export default {
       'Access-Control-Max-Age': '86400', // 24 hours
     };
 
-    // Handle preflight requests
+    // Handle preflight requests (no rate limiting needed)
     if (method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
+    }
+
+    // Apply rate limiting (skip for health check and webhooks)
+    // Webhooks are verified by signature and shouldn't be rate limited by IP
+    if (path !== '/api/health' && path !== '/api/payment/webhook') {
+      const endpointType = getEndpointType(path, method);
+      const rateLimitResult = await checkRateLimit(request, env, endpointType);
+
+      if (!rateLimitResult.allowed) {
+        return createRateLimitResponse(rateLimitResult.resetAt, corsHeaders);
+      }
+
+      // Add rate limit headers to CORS headers for successful responses
+      const config = RATE_LIMITS[endpointType];
+      corsHeaders['X-RateLimit-Limit'] = config.maxRequests.toString();
+      corsHeaders['X-RateLimit-Remaining'] = rateLimitResult.remaining.toString();
+      corsHeaders['X-RateLimit-Reset'] = rateLimitResult.resetAt.toString();
     }
 
     try {
