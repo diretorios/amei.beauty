@@ -118,7 +118,7 @@ export function ProfilePage() {
             onClick={() => {
               window.location.href = '/add-personalized-links';
             }}
-            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+            disabled={true}
           >
             {t('buttons.add_personalized_links')}
           </Button>
@@ -127,7 +127,7 @@ export function ProfilePage() {
             onClick={() => {
               window.location.href = '/add-services-and-prices';
             }}
-            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+            disabled={true}
           >
             {t('buttons.add_services_and_prices')}
           </Button>
@@ -136,7 +136,7 @@ export function ProfilePage() {
             onClick={() => {
               window.location.href = '/add-portfolio';
             }}
-            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
+            disabled={true}
           >
             {t('buttons.add_portfolio')}
           </Button>
