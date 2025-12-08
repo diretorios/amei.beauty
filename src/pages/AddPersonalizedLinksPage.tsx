@@ -204,7 +204,7 @@ export function AddPersonalizedLinksPage() {
               <select
                 id="link-type"
                 value={newLinkType}
-                onChange={(e) => setNewLinkType(e.target.value as 'http' | 'mailto' | 'nostr' | 'custom')}
+                onChange={(e) => setNewLinkType((e.target as HTMLSelectElement).value as 'http' | 'mailto' | 'nostr' | 'custom')}
                 className="input"
                 style={{ width: '100%' }}
               >
