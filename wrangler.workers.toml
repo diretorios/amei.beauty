@@ -39,13 +39,10 @@ ENVIRONMENT = "development"
 # Or: npx wrangler secret put ALLOWED_ORIGINS --name amei-beauty-api
 # Note: API keys should be set as secrets in production:
 # For Cloudflare Workers (this file):
-#   npx wrangler secret put DEEPSEEK_API_KEY
-#   npx wrangler secret put SERPAPI_API_KEY
 #   npx wrangler secret put AUTH_SECRET
 #   npx wrangler secret put ALLOWED_ORIGINS
-# For Cloudflare Pages:
-#   npx wrangler pages secret put DEEPSEEK_API_KEY
-#   npx wrangler pages secret put SERPAPI_API_KEY
+#   npx wrangler secret put STRIPE_SECRET_KEY (if payments enabled)
+#   npx wrangler secret put STRIPE_WEBHOOK_SECRET (if payments enabled)
 # Secrets are not stored in this file for security reasons
 # 
 # AUTH_SECRET: Generate with: openssl rand -base64 32

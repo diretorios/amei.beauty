@@ -9,8 +9,6 @@ export interface Env {
   ENVIRONMENT: string;
   ALLOWED_ORIGINS?: string; // Comma-separated list of allowed origins
   RATE_LIMIT_APP_PREFIX?: string; // Prefix for rate limit keys (defaults to 'amei-beauty')
-  DEEPSEEK_API_KEY?: string;
-  SERPAPI_API_KEY?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
   AUTH_SECRET?: string; // Secret key for hashing owner tokens
