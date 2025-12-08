@@ -182,7 +182,7 @@ function detectLanguage(): string {
 **pt-BR** (`locales/pt-BR/onboarding.json`):
 ```json
 {
-  "title": "Crie seu cartão profissional",
+  "title": "Crie seu cartão digital profissional",
   "subtitle": "Em apenas 1 minuto",
   "steps": {
     "name": {

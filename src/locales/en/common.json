@@ -15,10 +15,10 @@
     "finish": "Finish",
     "skip": "Skip",
     "continue": "Continue",
-    "add_social_networks": "Add Social Networks",
-    "add_personalized_links": "Add Personalized Links",
-    "add_services_and_prices": "Add Services and Prices",
-    "add_portfolio": "Add Portfolio",
+    "add_social_networks": "Social Networks",
+    "add_personalized_links": "Links",
+    "add_services_and_prices": "Services / Prices",
+    "add_portfolio": "Portfolio",
     "add_custom_content": "Add Custom Content"
   },
   "navigation": {

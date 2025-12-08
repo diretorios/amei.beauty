@@ -1,6 +1,7 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import { useTranslation } from '../hooks/useTranslation';
 import { Button } from './Button';
+import { Input } from './Input';
 import { api, ApiError } from '../lib/api';
 import { storage } from '../lib/storage';
 import type { CardData } from '../models/types';
@@ -15,20 +16,51 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
   const { t } = useTranslation();
   const [isPublishing, setIsPublishing] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [username, setUsername] = useState('');
+
+  const handleCancel = () => {
+    setShowModal(false);
+    setUsername('');
+  };
+
+  // Handle Escape key to close modal and focus management
+  useEffect(() => {
+    if (!showModal) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowModal(false);
+        setUsername('');
+      }
+    };
+
+    // Focus input when modal opens
+    const input = document.getElementById('publish-username') as HTMLInputElement;
+    if (input) {
+      setTimeout(() => input.focus(), 0);
+    }
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [showModal]);
+
+  const handlePublishClick = () => {
+    setShowModal(true);
+  };
 
   const handlePublish = async () => {
     setIsPublishing(true);
+    setShowModal(false);
 
     try {
-      // TODO: Add username input modal
-      const username = prompt(t('profile.fields.username') || 'Username (optional):');
-      
-      const publishedCard = await api.publish(card, username || undefined);
+      const publishedCard = await api.publish(card, username.trim() || undefined);
       
       // Save published card ID to local storage
       await storage.setPreference('published_card_id', publishedCard.id);
       
       setIsPublished(true);
+      setUsername('');
       onPublished?.(publishedCard);
     } catch (error) {
       console.error('Publish error:', error);
@@ -50,14 +82,65 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
   }
 
   return (
-    <Button
-      variant="primary"
-      onClick={handlePublish}
-      isLoading={isPublishing}
-      disabled={isPublishing}
-    >
-      {t('buttons.publish')}
-    </Button>
+    <>
+      <Button
+        variant="primary"
+        onClick={handlePublishClick}
+        isLoading={isPublishing}
+        disabled={isPublishing || showModal}
+      >
+        {t('buttons.publish')}
+      </Button>
+
+      {showModal && (
+        <div 
+          className="modal-overlay"
+          onClick={handleCancel}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="publish-modal-title"
+        >
+          <div 
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="publish-modal-title">{t('buttons.publish')}</h2>
+            <p className="modal-description">
+              {t('profile.fields.username') || 'Username (optional)'}
+            </p>
+            <Input
+              id="publish-username"
+              type="text"
+              value={username}
+              onInput={(e) => setUsername((e.target as HTMLInputElement).value)}
+              placeholder={t('profile.fields.username') || 'Username (optional)'}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !isPublishing) {
+                  handlePublish();
+                }
+              }}
+            />
+            <div className="modal-actions">
+              <Button
+                variant="secondary"
+                onClick={handleCancel}
+                disabled={isPublishing}
+              >
+                {t('buttons.cancel')}
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handlePublish}
+                isLoading={isPublishing}
+                disabled={isPublishing}
+              >
+                {t('buttons.publish')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
