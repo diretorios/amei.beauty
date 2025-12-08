@@ -67,7 +67,9 @@ export function AddPortfolioPage() {
       // Try to upload via API first (for published cards)
       let photoUrl: string;
       try {
-        const uploadResult = await api.uploadImage(file);
+        // Pass cardId if we have a published card (enables authenticated upload)
+        const cardId = publishedCard?.id;
+        const uploadResult = await api.uploadImage(file, cardId);
         photoUrl = uploadResult.url;
       } catch (uploadError) {
         // Fallback to base64 if API upload fails (e.g., in development)

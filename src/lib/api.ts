@@ -183,15 +183,34 @@ export const api = {
 
   /**
    * Upload image to R2
+   * @param file - The image file to upload
+   * @param cardId - Optional card ID for authenticated uploads (requires owner token)
    */
-  async uploadImage(file: File): Promise<{ url: string; filename: string }> {
+  async uploadImage(file: File, cardId?: string): Promise<{ url: string; filename: string }> {
     const formData = new FormData();
     formData.append('file', file);
 
-    const url = `${API_BASE_URL}/upload`;
+    // Build URL with optional cardId query parameter
+    let url = `${API_BASE_URL}/upload`;
+    if (cardId) {
+      url += `?cardId=${encodeURIComponent(cardId)}`;
+    }
+
+    // Build headers
+    const headers: Record<string, string> = {};
+    
+    // Add Authorization header if cardId is provided
+    if (cardId) {
+      const authHeader = getAuthHeader(cardId);
+      if (authHeader) {
+        headers['Authorization'] = authHeader;
+      }
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       body: formData,
+      headers,
     });
 
     if (!response.ok) {

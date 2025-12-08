@@ -1,9 +1,14 @@
 /**
  * Handle image upload to R2
- * POST /api/upload
+ * POST /api/upload?cardId=<cardId> (optional)
+ * 
+ * Authentication:
+ * - If cardId is provided, requires valid owner token (Bearer token in Authorization header)
+ * - If no cardId, allows upload but applies stricter rate limiting (handled by middleware)
  */
 
 import type { Env } from '../types';
+import { verifyCardOwnership } from '../middleware/auth';
 
 export async function handleUploadImage(
   request: Request,
@@ -11,6 +16,32 @@ export async function handleUploadImage(
   corsHeaders: Record<string, string>
 ): Promise<Response> {
   try {
+    // Check if cardId is provided in query parameters
+    const url = new URL(request.url);
+    const cardId = url.searchParams.get('cardId');
+    
+    // If cardId is provided, verify ownership
+    if (cardId) {
+      const ownership = await verifyCardOwnership(cardId, request, env);
+      
+      if (!ownership.valid) {
+        // Legacy cards without tokens are not allowed for authenticated uploads
+        // They should republish to get a token, or upload without cardId (with stricter limits)
+        return new Response(
+          JSON.stringify({ 
+            error: 'Unauthorized',
+            message: ownership.isLegacy 
+              ? 'This card needs to be republished to enable authenticated uploads. Please republish your card or upload without authentication (with stricter limits).'
+              : 'Invalid or missing authentication token. Please provide a valid owner token.'
+          }),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    }
+    
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
