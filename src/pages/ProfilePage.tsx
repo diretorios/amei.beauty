@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 import { useTranslation } from '../hooks/useTranslation';
-import { LanguageSelector } from '../components/LanguageSelector';
+import { Button } from '../components/Button';
 import { PublishButton } from '../components/PublishButton';
+import { CardDisplay } from '../components/CardDisplay';
 import { storage } from '../lib/storage';
 import type { CardData } from '../models/types';
 
@@ -43,19 +44,23 @@ export function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <header className="profile-header">
-        <h1>{t('profile.title')}</h1>
-        <LanguageSelector />
-      </header>
       <main className="profile-content">
-        <div className="profile-section">
-          <h2>{card.profile.full_name}</h2>
-          <p>{card.profile.profession}</p>
-          {card.profile.headline && <p className="headline">{card.profile.headline}</p>}
-          {card.profile.bio && <p className="bio">{card.profile.bio}</p>}
+        <div className="profile-preview-section">
+          <h2 className="preview-section-title">{t('profile.preview')}</h2>
+          <div className="profile-preview-container">
+            <CardDisplay card={card} showWhatsAppButton={false} isPreview={true} />
+          </div>
         </div>
 
         <div className="profile-actions">
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = '/edit';
+            }}
+          >
+            {t('profile.edit')}
+          </Button>
           <PublishButton
             card={card}
             onPublished={(publishedCard) => {

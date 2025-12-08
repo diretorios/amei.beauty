@@ -1,6 +1,7 @@
 {
   "title": "Profile",
   "edit": "Edit profile",
+  "preview": "Preview",
   "fields": {
     "name": "Full name",
     "profession": "Profession",

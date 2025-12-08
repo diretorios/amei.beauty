@@ -28,14 +28,19 @@
     "change": "Alterar foto",
     "remove": "Remover foto"
   },
-  "ai_completion": {
-    "title": "Deixe a IA completar seu perfil",
-    "description": "Estamos buscando suas informações online...",
-    "review": "Revise e aprove o que encontramos",
-    "review_description": "Revise as sugestões abaixo e aprove o que deseja usar:",
-    "skip": "Pular esta etapa",
-    "start": "Iniciar busca",
-    "loading": "Buscando informações..."
+  "step5": {
+    "title": "Conte mais sobre você",
+    "description": "Essas informações são opcionais, mas ajudam seus clientes a conhecerem você melhor",
+    "bio": {
+      "label": "Algo sobre você",
+      "placeholder": "Conte um pouco sobre você, sua experiência ou especialidades...",
+      "help": "Uma breve descrição sobre você e seu trabalho"
+    },
+    "website": {
+      "label": "Seu site",
+      "placeholder": "https://seusite.com.br",
+      "help": "Link para seu site ou portfólio (opcional)"
+    }
   },
   "complete": {
     "title": "Pronto!",

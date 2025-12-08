@@ -28,14 +28,19 @@
     "change": "Change photo",
     "remove": "Remove photo"
   },
-  "ai_completion": {
-    "title": "Let AI complete your profile",
-    "description": "We're searching for your information online...",
-    "review": "Review and approve what we found",
-    "review_description": "Review the suggestions below and approve what you want to use:",
-    "skip": "Skip this step",
-    "start": "Start search",
-    "loading": "Searching for information..."
+  "step5": {
+    "title": "Tell us more about you",
+    "description": "This information is optional, but helps your clients get to know you better",
+    "bio": {
+      "label": "Something about you",
+      "placeholder": "Tell us a bit about yourself, your experience or specialties...",
+      "help": "A brief description about you and your work"
+    },
+    "website": {
+      "label": "Your website",
+      "placeholder": "https://yoursite.com",
+      "help": "Link to your website or portfolio (optional)"
+    }
   },
   "complete": {
     "title": "Done!",

@@ -18,6 +18,27 @@
   border-radius: var(--radius-xl);
   padding: var(--spacing-2xl);
   box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.public-card.card-preview-mode {
+  border: 2px dashed var(--color-primary);
+  background: var(--color-white);
+}
+
+.preview-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 1;
 }
 
 .card-photo {
@@ -64,20 +85,46 @@
   border-radius: var(--radius-md);
 }
 
+.card-website {
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.website-link {
+  display: inline-block;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-size: var(--font-size-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.website-link:hover {
+  text-decoration: underline;
+  background-color: var(--color-gray-50);
+}
+
 .card-services,
-.card-social {
+.card-social,
+.card-links,
+.card-certifications {
   margin-bottom: var(--spacing-xl);
 }
 
 .card-services h2,
-.card-social h2 {
+.card-social h2,
+.card-links h2,
+.card-certifications h2 {
   font-size: var(--font-size-xl);
   margin-bottom: var(--spacing-md);
   color: var(--color-gray-900);
 }
 
 .card-services ul,
-.card-social ul {
+.card-social ul,
+.card-links ul,
+.card-certifications ul {
   list-style: none;
   padding: 0;
 }
@@ -90,17 +137,37 @@
   border-left: 4px solid var(--color-primary);
 }
 
-.card-social li {
+.card-social li,
+.card-links li {
   padding: var(--spacing-sm) 0;
 }
 
-.card-social a {
+.card-social a,
+.card-links a {
   color: var(--color-primary);
   text-decoration: none;
 }
 
-.card-social a:hover {
+.card-social a:hover,
+.card-links a:hover {
   text-decoration: underline;
+}
+
+.card-certifications li {
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  background: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.cert-issuer {
+  color: var(--color-gray-600);
+  font-weight: var(--font-weight-normal);
+}
+
+.cert-date {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
 }
 
 .card-actions {

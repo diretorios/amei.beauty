@@ -11,6 +11,7 @@ export interface Profile {
   profession: string; // e.g., "Cabeleireira", "Manicure"
   headline: string;
   bio: string;
+  website: string; // Website URL
   whatsapp: string; // WhatsApp number
 }
 

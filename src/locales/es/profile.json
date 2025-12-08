@@ -1,6 +1,7 @@
 {
   "title": "Perfil",
   "edit": "Editar perfil",
+  "preview": "Vista previa",
   "fields": {
     "name": "Nombre completo",
     "profession": "Profesión",

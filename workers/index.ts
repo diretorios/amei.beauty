@@ -11,7 +11,6 @@ import { handleDeleteCard } from './handlers/delete-card';
 import { handleSearch } from './handlers/search';
 import { handleDirectory } from './handlers/directory';
 import { handleUploadImage } from './handlers/upload-image';
-import { handleAIComplete } from './handlers/ai-complete';
 import { handleDetectLocation } from './handlers/detect-location';
 
 export default {
@@ -63,10 +62,6 @@ export default {
 
       if (path === '/api/upload' && method === 'POST') {
         return handleUploadImage(request, env, corsHeaders);
-      }
-
-      if (path === '/api/ai/complete' && method === 'POST') {
-        return handleAIComplete(request, env, corsHeaders);
       }
 
       if (path === '/api/detect-location' && method === 'GET') {

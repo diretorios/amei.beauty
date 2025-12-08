@@ -1,16 +1,17 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import { useTranslation } from '../hooks/useTranslation';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
-import { AICompletion } from '../components/AICompletion';
+import { Textarea } from '../components/Textarea';
 import { storage } from '../lib/storage';
-import type { Profile, CardData, Service, SocialLink } from '../models/types';
+import type { Profile, CardData } from '../models/types';
 
 interface OnboardingPageProps {
   onComplete: () => void;
+  initialCard?: CardData | null;
 }
 
-export function OnboardingPage({ onComplete }: OnboardingPageProps) {
+export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps) {
   const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [profile, setProfile] = useState<Partial<Profile>>({
@@ -20,56 +21,51 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
     photo: null,
     headline: '',
     bio: '',
+    website: '',
   });
-  const [aiServices, setAIServices] = useState<Service[]>([]);
-  const [aiSocial, setAISocial] = useState<SocialLink[]>([]);
 
-  const handleAISkip = async () => {
-    // Skip AI completion, save and complete onboarding
-    await saveAndComplete();
-  };
+  // Load existing card data if editing
+  useEffect(() => {
+    if (initialCard) {
+      setProfile({
+        full_name: initialCard.profile.full_name || '',
+        profession: initialCard.profile.profession || '',
+        whatsapp: initialCard.profile.whatsapp || '',
+        photo: initialCard.profile.photo || null,
+        headline: initialCard.profile.headline || '',
+        bio: initialCard.profile.bio || '',
+        website: initialCard.profile.website || '',
+      });
+    }
+  }, [initialCard]);
 
-  const handleAIComplete = async (suggestions: {
-    profile: Partial<Profile>;
-    services: Service[];
-    social: SocialLink[];
-    location?: {
-      city?: string;
-      neighborhood?: string;
-      state?: string;
-    };
-  }) => {
-    // Apply AI suggestions to state
-    const updatedProfile = {
-      ...profile,
-      headline: suggestions.profile.headline || profile.headline,
-      bio: suggestions.profile.bio || profile.bio,
-    };
-    setProfile(updatedProfile);
-    setAIServices(suggestions.services);
-    setAISocial(suggestions.social);
-    
-    // Save and complete onboarding with updated values
-    await saveAndComplete(updatedProfile, suggestions.services, suggestions.social);
-  };
-
-  const saveAndComplete = async (
-    profileToSave: Partial<Profile> = profile,
-    servicesToSave: Service[] = aiServices,
-    socialToSave: SocialLink[] = aiSocial
-  ) => {
-    const cardData: CardData = {
+  const saveAndComplete = async () => {
+    // Preserve existing card data if editing, otherwise create new
+    const cardData: CardData = initialCard ? {
+      ...initialCard,
       profile: {
-        full_name: profileToSave.full_name || '',
-        profession: profileToSave.profession || '',
-        whatsapp: profileToSave.whatsapp || '',
-        photo: profileToSave.photo || null,
-        headline: profileToSave.headline || '',
-        bio: profileToSave.bio || '',
+        full_name: profile.full_name || '',
+        profession: profile.profession || '',
+        whatsapp: profile.whatsapp || '',
+        photo: profile.photo || null,
+        headline: profile.headline || '',
+        bio: profile.bio || '',
+        website: profile.website || '',
       },
-      social: socialToSave,
+      updated_at: new Date().toISOString(),
+    } : {
+      profile: {
+        full_name: profile.full_name || '',
+        profession: profile.profession || '',
+        whatsapp: profile.whatsapp || '',
+        photo: profile.photo || null,
+        headline: profile.headline || '',
+        bio: profile.bio || '',
+        website: profile.website || '',
+      },
+      social: [],
       links: [],
-      services: servicesToSave,
+      services: [],
       ratings: [],
       testimonials: [],
       client_photos: [],
@@ -100,13 +96,12 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
   };
 
   const handleNext = async () => {
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
-    } else if (step === 4) {
-      // After photo, show AI completion
-      setStep(5);
+    } else if (step === 5) {
+      // After optional bio/website step, save and complete onboarding
+      await saveAndComplete();
     }
-    // Step 5 is handled by AICompletion component (onComplete/onSkip)
   };
 
   const handleBack = () => {
@@ -133,9 +128,11 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
       case 2:
         return !!profile.profession?.trim();
       case 3:
-        return !!profile.whatsapp?.trim();
+        return !!profile.whatsapp?.trim(); // WhatsApp is mandatory
       case 4:
         return true; // Photo is optional
+      case 5:
+        return true; // Bio and website are optional
       default:
         return false;
     }
@@ -231,27 +228,44 @@ export function OnboardingPage({ onComplete }: OnboardingPageProps) {
 
           {step === 5 && (
             <div className="onboarding-step">
-              <AICompletion
-                profile={profile}
-                onComplete={handleAIComplete}
-                onSkip={handleAISkip}
+              <h2>{t('onboarding.step5.title')}</h2>
+              <p className="onboarding-step-description">{t('onboarding.step5.description')}</p>
+              <Textarea
+                id="bio"
+                labelKey="onboarding.step5.bio.label"
+                placeholder={t('onboarding.step5.bio.placeholder')}
+                helpKey="onboarding.step5.bio.help"
+                value={profile.bio || ''}
+                onInput={(e) =>
+                  setProfile({ ...profile, bio: (e.target as HTMLTextAreaElement).value })
+                }
+              />
+              <Input
+                id="website"
+                labelKey="onboarding.step5.website.label"
+                placeholder={t('onboarding.step5.website.placeholder')}
+                helpKey="onboarding.step5.website.help"
+                type="url"
+                inputMode="url"
+                value={profile.website || ''}
+                onInput={(e) =>
+                  setProfile({ ...profile, website: (e.target as HTMLInputElement).value })
+                }
               />
             </div>
           )}
         </div>
 
-        {step !== 5 && (
-          <div className="onboarding-actions">
-            {step > 1 && (
-              <Button variant="outline" onClick={handleBack}>
-                {t('buttons.back')}
-              </Button>
-            )}
-            <Button variant="primary" onClick={handleNext} disabled={!isStepValid()}>
-              {step === 4 ? t('buttons.next') : t('buttons.next')}
+        <div className="onboarding-actions">
+          {step > 1 && (
+            <Button variant="outline" onClick={handleBack}>
+              {t('buttons.back')}
             </Button>
-          </div>
-        )}
+          )}
+          <Button variant="primary" onClick={handleNext} disabled={!isStepValid()}>
+            {step === 5 ? t('buttons.finish') || t('buttons.next') : t('buttons.next')}
+          </Button>
+        </div>
       </div>
     </div>
   );

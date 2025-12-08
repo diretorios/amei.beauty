@@ -28,14 +28,19 @@
     "change": "Cambiar foto",
     "remove": "Eliminar foto"
   },
-  "ai_completion": {
-    "title": "Deja que la IA complete tu perfil",
-    "description": "Estamos buscando tu información en línea...",
-    "review": "Revisa y aprueba lo que encontramos",
-    "review_description": "Revisa las sugerencias a continuación y aprueba lo que deseas usar:",
-    "skip": "Omitir este paso",
-    "start": "Iniciar búsqueda",
-    "loading": "Buscando información..."
+  "step5": {
+    "title": "Cuéntanos más sobre ti",
+    "description": "Esta información es opcional, pero ayuda a tus clientes a conocerte mejor",
+    "bio": {
+      "label": "Algo sobre ti",
+      "placeholder": "Cuéntanos un poco sobre ti, tu experiencia o especialidades...",
+      "help": "Una breve descripción sobre ti y tu trabajo"
+    },
+    "website": {
+      "label": "Tu sitio web",
+      "placeholder": "https://tusitio.com",
+      "help": "Enlace a tu sitio web o portafolio (opcional)"
+    }
   },
   "complete": {
     "title": "¡Listo!",

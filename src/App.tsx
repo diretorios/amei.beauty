@@ -7,6 +7,7 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { DirectoryPage } from './pages/DirectoryPage';
 import { PublicCardPage } from './pages/PublicCardPage';
+import { EditPage } from './pages/EditPage';
 
 export function App() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -39,6 +40,7 @@ export function App() {
       <Navigation currentPath={currentPath} />
       <Router onChange={(e) => setCurrentPath(e.url)}>
         <Route path="/" component={ProfilePage} />
+        <Route path="/edit" component={EditPage} />
         <Route path="/directory" component={DirectoryPage} />
         <Route
           path="/card/:cardId"
@@ -48,7 +50,7 @@ export function App() {
           path="/:username"
           component={(props: { username: string }) => {
             // Don't match routes that start with known paths
-            if (props.username === 'directory' || props.username === 'card') {
+            if (props.username === 'directory' || props.username === 'card' || props.username === 'edit') {
               return null;
             }
             return <PublicCardPage username={props.username} />;

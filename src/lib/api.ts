@@ -169,33 +169,6 @@ export const api = {
   },
 
   /**
-   * AI Profile Completion
-   */
-  async completeProfile(data: {
-    name: string;
-    profession: string;
-    whatsapp?: string;
-  }): Promise<{
-    profile: Partial<import('../models/types').Profile>;
-    services: import('../models/types').Service[];
-    social: import('../models/types').SocialLink[];
-    location?: {
-      city?: string;
-      neighborhood?: string;
-      state?: string;
-    };
-    bio?: string;
-    headline?: string;
-  }> {
-    const response = await fetchApi('/ai/complete', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-
-    return response.json();
-  },
-
-  /**
    * Health check
    */
   async health(): Promise<{ status: string; timestamp: number }> {
