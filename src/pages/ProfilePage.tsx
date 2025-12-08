@@ -131,15 +131,6 @@ export function ProfilePage() {
           >
             {t('buttons.add_portfolio')}
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => {
-              window.location.href = '/edit';
-            }}
-            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
-          >
-            {t('buttons.add_custom_content')}
-          </Button>
           <PublishButton
             card={card}
             onPublished={async (publishedCard) => {
