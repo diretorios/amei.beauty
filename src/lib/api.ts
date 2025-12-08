@@ -6,8 +6,22 @@
 import type { PublishedCard, CardData } from '../models/types';
 import { getAuthHeader, storeOwnerToken } from './auth';
 
+// Get API URL from environment variable
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
+
+// Diagnostic logging for production debugging
+if (import.meta.env.PROD) {
+  console.log('[API Config] Production mode detected');
+  console.log('[API Config] VITE_API_URL:', import.meta.env.VITE_API_URL || '(not set)');
+  console.log('[API Config] Using API_BASE_URL:', API_BASE_URL);
+  
+  // Warn if using localhost in production
+  if (API_BASE_URL.includes('localhost')) {
+    console.error('[API Config] ⚠️ WARNING: Using localhost URL in production!');
+    console.error('[API Config] VITE_API_URL must be set during build time in GitHub Actions secrets.');
+  }
+}
 
 class ApiError extends Error {
   constructor(
