@@ -7,6 +7,7 @@
   "file_too_large": "Archivo demasiado grande",
   "unsupported_file_type": "Tipo de archivo no soportado",
   "save_failed": "Error al guardar",
-  "load_failed": "Error al cargar datos"
+  "load_failed": "Error al cargar datos",
+  "upload_failed": "Error al subir la foto"
 }
 

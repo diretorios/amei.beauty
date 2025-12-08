@@ -1,0 +1,14 @@
+{
+  "title": "Portfólio",
+  "description": "Adicione até 10 fotos para mostrar seu trabalho",
+  "upload_photo": "Adicionar Foto",
+  "uploading": "Enviando...",
+  "upload_help": "Adicione até 10 fotos para mostrar seu trabalho",
+  "max_photos_reached": "Máximo de 10 fotos atingido. Remova uma foto para adicionar outra.",
+  "empty": "Nenhuma foto ainda. Envie sua primeira foto para começar!",
+  "no_caption": "Sem legenda",
+  "add_caption": "Adicionar Legenda",
+  "edit_caption": "Editar Legenda",
+  "caption_placeholder": "Adicione uma legenda..."
+}
+

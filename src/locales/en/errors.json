@@ -7,6 +7,7 @@
   "file_too_large": "File too large",
   "unsupported_file_type": "Unsupported file type",
   "save_failed": "Failed to save",
-  "load_failed": "Failed to load data"
+  "load_failed": "Failed to load data",
+  "upload_failed": "Failed to upload photo"
 }
 

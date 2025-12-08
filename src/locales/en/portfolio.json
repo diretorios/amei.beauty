@@ -1,0 +1,14 @@
+{
+  "title": "Portfolio",
+  "description": "Add up to 10 photos to showcase your work",
+  "upload_photo": "Upload Photo",
+  "uploading": "Uploading...",
+  "upload_help": "Add up to 10 photos to showcase your work",
+  "max_photos_reached": "Maximum 10 photos reached. Remove a photo to add another.",
+  "empty": "No photos yet. Upload your first photo to get started!",
+  "no_caption": "No caption",
+  "add_caption": "Add Caption",
+  "edit_caption": "Edit Caption",
+  "caption_placeholder": "Add a caption..."
+}
+

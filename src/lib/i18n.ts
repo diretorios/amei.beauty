@@ -39,7 +39,7 @@ class I18n {
 
     try {
       // Load all translation files for this locale
-      const [common, onboarding, profile, services, directory, viral, errors, payments] =
+      const [common, onboarding, profile, services, directory, viral, errors, payments, portfolio] =
         await Promise.all([
           import(`../locales/${locale}/common.json`),
           import(`../locales/${locale}/onboarding.json`),
@@ -49,6 +49,7 @@ class I18n {
           import(`../locales/${locale}/viral.json`),
           import(`../locales/${locale}/errors.json`),
           import(`../locales/${locale}/payments.json`),
+          import(`../locales/${locale}/portfolio.json`),
         ]);
 
       this.translations = {
@@ -60,6 +61,7 @@ class I18n {
         viral: viral.default,
         errors: errors.default,
         payments: payments.default,
+        portfolio: portfolio.default,
       };
 
       localStorage.setItem('app_language', locale);

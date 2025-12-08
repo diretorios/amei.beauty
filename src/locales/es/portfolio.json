@@ -1,0 +1,14 @@
+{
+  "title": "Portafolio",
+  "description": "Agrega hasta 10 fotos para mostrar tu trabajo",
+  "upload_photo": "Subir Foto",
+  "uploading": "Subiendo...",
+  "upload_help": "Agrega hasta 10 fotos para mostrar tu trabajo",
+  "max_photos_reached": "Máximo de 10 fotos alcanzado. Elimina una foto para agregar otra.",
+  "empty": "Aún no hay fotos. ¡Sube tu primera foto para comenzar!",
+  "no_caption": "Sin descripción",
+  "add_caption": "Agregar Descripción",
+  "edit_caption": "Editar Descripción",
+  "caption_placeholder": "Agrega una descripción..."
+}
+
