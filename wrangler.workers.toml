@@ -24,8 +24,8 @@ bucket_name = "amei-beauty-images"
 # If sharing, use the existing namespace ID from your other application.
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "YOUR_KV_NAMESPACE_ID"  # Use existing namespace ID if sharing
-preview_id = "YOUR_KV_PREVIEW_ID"  # Use existing preview ID if sharing
+id = "4a757bc6c1ed4cd297a88492db23e86c"  # Using the same KV namespace as Pages
+preview_id = "e7ec951de82742b1bfc91419f7c9a557"  # Using the same preview namespace as Pages
 
 # Environment variables
 [vars]
