@@ -78,6 +78,9 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
       // Check API URL configuration in production
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
       if (import.meta.env.PROD && API_BASE_URL.includes('localhost')) {
+        console.error('[Publish] API configuration error detected');
+        console.error('[Publish] VITE_API_URL is not set or contains localhost');
+        console.error('[Publish] Fix: Set VITE_API_URL in GitHub Actions secrets and redeploy');
         throw new Error('API URL not configured. Please contact support.');
       }
 
@@ -106,6 +109,8 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
           const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
           if (import.meta.env.PROD && API_BASE_URL.includes('localhost')) {
             errorMessage = 'API configuration error. The application is not properly configured for production. Please contact support.';
+            console.error('[Publish] Configuration issue: VITE_API_URL contains localhost in production');
+            console.error('[Publish] Check browser console for [API Config] messages for details');
           } else {
             errorMessage = apiError.message || 'Network error. Please check your connection and try again.';
           }
