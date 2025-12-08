@@ -33,6 +33,20 @@
   },
   "loading": "Carregando...",
   "error": "Erro",
-  "success": "Sucesso"
+  "success": "Sucesso",
+  "a11y": {
+    "button_loading": "{{button}}, carregando",
+    "page_loaded": "Página carregada",
+    "search_results": "{{count}} resultados encontrados",
+    "search_results_single": "1 resultado encontrado",
+    "search_results_none": "Nenhum resultado encontrado",
+    "pagination_page": "Página {{current}} de {{total}}",
+    "content_loaded": "Conteúdo carregado",
+    "publish_success": "Cartão publicado com sucesso",
+    "publish_error": "Falha ao publicar cartão",
+    "payment_success": "Pagamento bem-sucedido. Atualizações desbloqueadas por 12 meses.",
+    "payment_cancelled": "Pagamento cancelado. Você pode tentar novamente a qualquer momento.",
+    "loading_complete": "Carregamento concluído"
+  }
 }
 

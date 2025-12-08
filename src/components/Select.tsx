@@ -1,16 +1,14 @@
 import { useTranslation } from '../hooks/useTranslation';
 
-interface InputProps extends preact.JSX.HTMLAttributes<HTMLInputElement> {
+interface SelectProps extends preact.JSX.HTMLAttributes<HTMLSelectElement> {
   labelKey?: string;
   errorKey?: string;
   helpKey?: string;
-  type?: string;
-  placeholder?: string;
-  value?: string;
   required?: boolean;
+  children: preact.ComponentChildren;
 }
 
-export function Input({ labelKey, errorKey, helpKey, className = '', required, ...props }: InputProps) {
+export function Select({ labelKey, errorKey, helpKey, className = '', required, children, ...props }: SelectProps) {
   const { t } = useTranslation();
   const hasError = !!errorKey;
 
@@ -31,7 +29,7 @@ export function Input({ labelKey, errorKey, helpKey, className = '', required, .
           {required && <span aria-label={t('errors.required')}> *</span>}
         </label>
       )}
-      <input
+      <select
         className={`input ${hasError ? 'input-error' : ''} ${className}`.trim()}
         aria-invalid={hasError}
         aria-describedby={describedBy}
@@ -39,7 +37,9 @@ export function Input({ labelKey, errorKey, helpKey, className = '', required, .
         aria-required={required}
         required={required}
         {...props}
-      />
+      >
+        {children}
+      </select>
       {helpKey && !hasError && (
         <div id={`${props.id}-help`} className="input-help">
           {t(helpKey)}

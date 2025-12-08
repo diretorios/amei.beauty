@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { useTranslation } from '../hooks/useTranslation';
 import { api, ApiError } from '../lib/api';
 import { CardDisplay } from '../components/CardDisplay';
+import { useScreenReaderAnnouncement } from '../components/ScreenReaderAnnouncer';
 import type { PublishedCard } from '../models/types';
 
 interface PublicCardPageProps {
@@ -14,6 +15,7 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
   const [card, setCard] = useState<PublishedCard | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { announce, Announcer } = useScreenReaderAnnouncement();
 
   // Use cardId or username from route params
   const identifier = cardId || username || '';
@@ -28,9 +30,11 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
       try {
         const loadedCard = await api.getCard(identifier);
         setCard(loadedCard);
+        announce(t('a11y.content_loaded'), 'polite');
       } catch (err) {
         const apiError = err instanceof ApiError ? err : new Error('Failed to load card');
         setError(apiError.message);
+        announce(apiError.message, 'assertive');
       } finally {
         setIsLoading(false);
       }
@@ -39,7 +43,7 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
     if (identifier) {
       loadCard();
     }
-  }, [identifier]);
+  }, [identifier, announce, t]);
 
   if (isLoading) {
     return (
@@ -47,6 +51,7 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
         <div className="loading" role="status" aria-live="polite" aria-label={t('loading')}>
           {t('loading')}
         </div>
+        <Announcer />
       </div>
     );
   }
@@ -54,7 +59,8 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
   if (error || !card) {
     return (
       <div className="public-card-page">
-        <div className="error">
+        <Announcer />
+        <div className="error" role="alert">
           <h1>{t('error')}</h1>
           <p>{error || t('errors.load_failed')}</p>
         </div>
@@ -64,6 +70,7 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
 
   return (
     <main id="main-content" className="public-card-page" role="main">
+      <Announcer />
       <CardDisplay card={card} showWhatsAppButton={true} isPreview={false} />
     </main>
   );

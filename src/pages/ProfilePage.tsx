@@ -6,6 +6,7 @@ import { CardDisplay } from '../components/CardDisplay';
 import { UpdateLockStatus } from '../components/UpdateLockStatus';
 import { storage } from '../lib/storage';
 import { api } from '../lib/api';
+import { useScreenReaderAnnouncement } from '../components/ScreenReaderAnnouncer';
 import type { CardData } from '../models/types';
 import type { PublishedCard } from '../models/types';
 
@@ -14,6 +15,7 @@ export function ProfilePage() {
   const [card, setCard] = useState<CardData | null>(null);
   const [publishedCard, setPublishedCard] = useState<PublishedCard | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { announce, Announcer } = useScreenReaderAnnouncement();
 
   useEffect(() => {
     loadCard();
@@ -24,6 +26,9 @@ export function ProfilePage() {
     try {
       const loadedCard = await storage.loadCard();
       setCard(loadedCard);
+      if (loadedCard) {
+        announce(t('a11y.content_loaded'), 'polite');
+      }
     } catch (error) {
       console.error('Failed to load card:', error);
     } finally {
@@ -46,7 +51,10 @@ export function ProfilePage() {
   if (isLoading) {
     return (
       <div className="profile-page">
-        <div className="loading">{t('loading')}</div>
+        <div className="loading" role="status" aria-live="polite" aria-label={t('loading')}>
+          {t('loading')}
+        </div>
+        <Announcer />
       </div>
     );
   }
@@ -61,6 +69,7 @@ export function ProfilePage() {
 
   return (
     <div className="profile-page">
+      <Announcer />
       <main className="profile-content">
         <div className="profile-preview-section">
           <h2 className="preview-section-title">{t('profile.preview')}</h2>
@@ -137,11 +146,11 @@ export function ProfilePage() {
               console.log('Card published:', publishedCard);
               setPublishedCard(publishedCard);
               await checkPublishedCard(); // Refresh published card status
-              alert(t('buttons.publish') + ' ' + t('success'));
+              announce(t('a11y.publish_success'), 'assertive');
             }}
             onError={(error) => {
               console.error('Publish error:', error);
-              alert(t('errors.save_failed') + ': ' + error.message);
+              announce(t('a11y.publish_error') + ': ' + error.message, 'assertive');
             }}
           />
         </div>

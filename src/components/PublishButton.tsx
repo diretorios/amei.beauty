@@ -94,7 +94,7 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
 
   if (isPublished) {
     return (
-      <div className="publish-success">
+      <div className="publish-success" role="status" aria-live="polite" aria-atomic="true">
         <p>{t('buttons.publish')} ✓</p>
       </div>
     );

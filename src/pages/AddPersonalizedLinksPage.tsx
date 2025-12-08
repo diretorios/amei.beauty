@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { useTranslation } from '../hooks/useTranslation';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+import { Select } from '../components/Select';
 import { UpdateLockStatus } from '../components/UpdateLockStatus';
 import { storage } from '../lib/storage';
 import { api } from '../lib/api';
@@ -197,23 +198,18 @@ export function AddPersonalizedLinksPage() {
               onInput={(e) => setNewLinkLabel((e.target as HTMLInputElement).value)}
             />
             
-            <div style={{ marginBottom: '1rem' }}>
-              <label htmlFor="link-type" className="input-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
-                {t('onboarding.step7.type.label')}
-              </label>
-              <select
-                id="link-type"
-                value={newLinkType}
-                onChange={(e) => setNewLinkType((e.target as HTMLSelectElement).value as 'http' | 'mailto' | 'nostr' | 'custom')}
-                className="input"
-                style={{ width: '100%' }}
-              >
-                <option value="http">{t('onboarding.step7.type.options.http')}</option>
-                <option value="mailto">{t('onboarding.step7.type.options.mailto')}</option>
-                <option value="nostr">{t('onboarding.step7.type.options.nostr')}</option>
-                <option value="custom">{t('onboarding.step7.type.options.custom')}</option>
-              </select>
-            </div>
+            <Select
+              id="link-type"
+              labelKey="onboarding.step7.type.label"
+              value={newLinkType}
+              onChange={(e) => setNewLinkType((e.target as HTMLSelectElement).value as 'http' | 'mailto' | 'nostr' | 'custom')}
+              style={{ width: '100%', marginBottom: '1rem' }}
+            >
+              <option value="http">{t('onboarding.step7.type.options.http')}</option>
+              <option value="mailto">{t('onboarding.step7.type.options.mailto')}</option>
+              <option value="nostr">{t('onboarding.step7.type.options.nostr')}</option>
+              <option value="custom">{t('onboarding.step7.type.options.custom')}</option>
+            </Select>
 
             <Input
               id="link-value"
@@ -236,7 +232,7 @@ export function AddPersonalizedLinksPage() {
           </div>
         </div>
 
-        <div className="onboarding-actions">
+        <div className="onboarding-actions" style={{ marginTop: '2rem' }}>
           <Button
             variant="outline"
             onClick={() => window.location.href = '/'}

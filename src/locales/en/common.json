@@ -33,6 +33,20 @@
   },
   "loading": "Loading...",
   "error": "Error",
-  "success": "Success"
+  "success": "Success",
+  "a11y": {
+    "button_loading": "{{button}}, loading",
+    "page_loaded": "Page loaded",
+    "search_results": "{{count}} results found",
+    "search_results_single": "1 result found",
+    "search_results_none": "No results found",
+    "pagination_page": "Page {{current}} of {{total}}",
+    "content_loaded": "Content loaded",
+    "publish_success": "Card published successfully",
+    "publish_error": "Failed to publish card",
+    "payment_success": "Payment successful. Updates unlocked for 12 months.",
+    "payment_cancelled": "Payment cancelled. You can try again anytime.",
+    "loading_complete": "Loading complete"
+  }
 }
 

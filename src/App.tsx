@@ -12,11 +12,13 @@ import { AddSocialNetworksPage } from './pages/AddSocialNetworksPage';
 import { AddPersonalizedLinksPage } from './pages/AddPersonalizedLinksPage';
 import { AddServicesAndPricesPage } from './pages/AddServicesAndPricesPage';
 import { AddPortfolioPage } from './pages/AddPortfolioPage';
+import { useScreenReaderAnnouncement } from './components/ScreenReaderAnnouncer';
 
 export function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [hasProfile, setHasProfile] = useState(false);
   const [currentPath, setCurrentPath] = useState('');
+  const { announce, Announcer } = useScreenReaderAnnouncement();
 
   useEffect(() => {
     // Initialize i18n and storage, then check for existing profile
@@ -38,27 +40,30 @@ export function App() {
         try {
           const { api } = await import('./lib/api');
           await api.getCard(cardId);
-          // Show success message
-          alert('Payment successful! Updates unlocked for 12 months.');
+          // Announce success message to screen readers
+          announce(i18n.t('a11y.payment_success'), 'assertive');
           // Clean URL
           window.history.replaceState({}, '', window.location.pathname);
         } catch (error) {
           console.error('Failed to refresh card after payment:', error);
         }
       } else if (paymentStatus === 'cancelled') {
-        // Payment cancelled
-        alert('Payment cancelled. You can try again anytime.');
+        // Payment cancelled - announce to screen readers
+        announce(i18n.t('a11y.payment_cancelled'), 'polite');
         // Clean URL
         window.history.replaceState({}, '', window.location.pathname);
       }
     });
-  }, []);
+  }, [announce]);
 
   if (!isInitialized) {
     return (
-      <div role="status" aria-live="polite" aria-label="Loading application">
-        Loading...
-      </div>
+      <>
+        <div role="status" aria-live="polite" aria-label="Loading application">
+          Loading...
+        </div>
+        <Announcer />
+      </>
     );
   }
 
@@ -69,8 +74,13 @@ export function App() {
 
   return (
     <div className="app">
+      <Announcer />
       <Navigation currentPath={currentPath} />
-      <Router onChange={(e) => setCurrentPath(e.url)}>
+      <Router onChange={(e) => {
+        setCurrentPath(e.url);
+        // Announce page navigation to screen readers
+        announce(i18n.t('a11y.page_loaded'), 'polite');
+      }}>
         <Route path="/" component={ProfilePage} />
         <Route path="/edit" component={EditPage} />
         <Route path="/add-social-networks" component={AddSocialNetworksPage} />

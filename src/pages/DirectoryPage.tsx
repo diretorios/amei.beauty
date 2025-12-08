@@ -4,6 +4,7 @@ import { api, ApiError } from '../lib/api';
 import { CardPreview } from '../components/CardPreview';
 import { Input } from '../components/Input';
 import { Button } from '../components/Button';
+import { useScreenReaderAnnouncement } from '../components/ScreenReaderAnnouncer';
 import type { PublishedCard } from '../models/types';
 
 export function DirectoryPage() {
@@ -18,6 +19,7 @@ export function DirectoryPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [showFeatured, setShowFeatured] = useState(false);
+  const { announce, Announcer } = useScreenReaderAnnouncement();
 
   const limit = 20;
 
@@ -35,13 +37,23 @@ export function DirectoryPage() {
       setCards(result.cards);
       setTotalPages(result.totalPages);
       setTotal(result.total);
+      
+      // Announce results to screen readers
+      if (result.total === 0) {
+        announce(t('a11y.search_results_none'), 'polite');
+      } else if (result.total === 1) {
+        announce(t('a11y.search_results_single'), 'polite');
+      } else {
+        announce(t('a11y.search_results', { count: result.total }), 'polite');
+      }
     } catch (err) {
       const apiError = err instanceof ApiError ? err : new Error('Failed to load directory');
       setError(apiError.message);
+      announce(apiError.message, 'assertive');
     } finally {
       setIsLoading(false);
     }
-  }, [page, limit, showFeatured]);
+  }, [page, limit, showFeatured, announce, t]);
 
   const performSearch = useCallback(async () => {
     setIsLoading(true);
@@ -59,13 +71,23 @@ export function DirectoryPage() {
       setCards(result.cards);
       setTotalPages(Math.ceil(result.total / limit));
       setTotal(result.total);
+      
+      // Announce search results to screen readers
+      if (result.total === 0) {
+        announce(t('a11y.search_results_none'), 'polite');
+      } else if (result.total === 1) {
+        announce(t('a11y.search_results_single'), 'polite');
+      } else {
+        announce(t('a11y.search_results', { count: result.total }), 'polite');
+      }
     } catch (err) {
       const apiError = err instanceof ApiError ? err : new Error('Failed to search');
       setError(apiError.message);
+      announce(apiError.message, 'assertive');
     } finally {
       setIsLoading(false);
     }
-  }, [searchQuery, selectedCategory, selectedLocation, page, limit]);
+  }, [searchQuery, selectedCategory, selectedLocation, page, limit, announce, t]);
 
   useEffect(() => {
     if (searchQuery || selectedCategory || selectedLocation) {
@@ -96,9 +118,10 @@ export function DirectoryPage() {
 
   return (
     <main id="main-content" className="directory-page" role="main">
+      <Announcer />
       <header className="directory-header">
         <h1>{t('directory.title')}</h1>
-        <p className="directory-subtitle">
+        <p className="directory-subtitle" aria-live="polite" aria-atomic="true">
           {total > 0 ? `${total} ${total === 1 ? 'profissional encontrado' : 'profissionais encontrados'}` : ''}
         </p>
       </header>
@@ -199,17 +222,23 @@ export function DirectoryPage() {
             <div className="directory-pagination">
               <Button
                 variant="outline"
-                onClick={() => setPage(page - 1)}
+                onClick={() => {
+                  setPage(page - 1);
+                  announce(t('a11y.pagination_page', { current: page - 1, total: totalPages }), 'polite');
+                }}
                 disabled={page === 1}
               >
                 {t('buttons.back')}
               </Button>
-              <span className="pagination-info">
+              <span className="pagination-info" aria-live="polite" aria-atomic="true">
                 {t('directory.page') || 'Página'} {page} {t('directory.of') || 'de'} {totalPages}
               </span>
               <Button
                 variant="outline"
-                onClick={() => setPage(page + 1)}
+                onClick={() => {
+                  setPage(page + 1);
+                  announce(t('a11y.pagination_page', { current: page + 1, total: totalPages }), 'polite');
+                }}
                 disabled={page >= totalPages}
               >
                 {t('buttons.next')}

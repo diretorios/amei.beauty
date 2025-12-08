@@ -27,9 +27,21 @@ export function Button({
   };
 
   const classes = `${baseClasses} ${variantClasses[variant]} ${className}`.trim();
+  
+  // Get the button's accessible name
+  const accessibleName = labelKey ? t(labelKey) : (typeof children === 'string' ? children : '');
+  const loadingLabel = isLoading && accessibleName 
+    ? t('a11y.button_loading', { button: accessibleName }) || `${accessibleName}, ${t('loading')}`
+    : t('loading');
 
   return (
-    <button className={classes} disabled={disabled || isLoading} {...props}>
+    <button 
+      className={classes} 
+      disabled={disabled || isLoading} 
+      aria-busy={isLoading}
+      aria-label={isLoading && accessibleName ? loadingLabel : undefined}
+      {...props}
+    >
       {isLoading ? t('loading') : labelKey ? t(labelKey) : children}
     </button>
   );
