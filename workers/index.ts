@@ -111,6 +111,34 @@ export default {
         return handlePaymentWebhook(request, env, corsHeaders);
       }
 
+      // API root - return API information
+      if (path === '/api' && method === 'GET') {
+        return new Response(
+          JSON.stringify({
+            name: 'amei.beauty API',
+            version: '1.0.0',
+            status: 'ok',
+            endpoints: {
+              health: '/api/health',
+              publish: '/api/publish',
+              card: '/api/card/:id',
+              search: '/api/search',
+              directory: '/api/directory',
+              upload: '/api/upload',
+              'detect-location': '/api/detect-location',
+              endorse: '/api/endorse',
+              payment: {
+                checkout: '/api/payment/checkout',
+                webhook: '/api/payment/webhook',
+              },
+            },
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
       // Health check
       if (path === '/api/health' && method === 'GET') {
         return new Response(
