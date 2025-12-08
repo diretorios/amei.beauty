@@ -20,7 +20,8 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "verify:config": "./scripts/verify-production-config.sh",
-    "check:api-url": "node scripts/check-api-url.js"
+    "check:api-url": "node scripts/check-api-url.js",
+    "test:production-api": "node scripts/test-production-api.js"
   },
   "dependencies": {
     "preact": "^10.19.0",

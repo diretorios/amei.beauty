@@ -80,12 +80,40 @@ async function fetchApi(
     const errorMessage = error instanceof Error 
       ? error.message 
       : 'Network error. Please check your connection.';
-    throw new ApiError(
-      errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')
+    
+    // Enhanced error diagnostics for production
+    let diagnosticMessage = 'Unable to connect to server.';
+    
+    if (import.meta.env.PROD) {
+      // Log diagnostic information in production
+      console.error('[API Error] Network error details:', {
+        url,
+        endpoint,
+        apiBaseUrl: API_BASE_URL,
+        errorMessage,
+        isLocalhost: API_BASE_URL.includes('localhost'),
+      });
+      
+      // Provide more specific error messages based on the issue
+      if (API_BASE_URL.includes('localhost')) {
+        diagnosticMessage = 'API URL not configured. The application is trying to connect to localhost. Please contact support.';
+      } else if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+        // Could be CORS, connection refused, or DNS error
+        diagnosticMessage = `Unable to connect to API server at ${API_BASE_URL}. This could be a CORS issue, network problem, or the server may be down.`;
+      } else {
+        diagnosticMessage = `Network error: ${errorMessage}`;
+      }
+    } else {
+      // Development error message
+      diagnosticMessage = errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')
         ? 'Unable to connect to server. Please check your internet connection and try again.'
-        : errorMessage,
+        : errorMessage;
+    }
+    
+    throw new ApiError(
+      diagnosticMessage,
       0, // Status 0 indicates network error
-      error
+      { originalError: error, url, apiBaseUrl: API_BASE_URL }
     );
   }
 
@@ -94,6 +122,29 @@ async function fetchApi(
       error: 'Unknown error',
       message: response.statusText,
     }));
+    
+    // Enhanced error diagnostics for production
+    if (import.meta.env.PROD && response.status >= 500) {
+      console.error('[API Error] Server error details:', {
+        url,
+        endpoint,
+        status: response.status,
+        statusText: response.statusText,
+        apiBaseUrl: API_BASE_URL,
+      });
+    }
+    
+    // Check for CORS errors (status 0 or specific CORS-related status codes)
+    if (response.status === 0 || (response.status >= 400 && response.headers.get('Access-Control-Allow-Origin') === null)) {
+      console.error('[API Error] Possible CORS issue:', {
+        url,
+        endpoint,
+        status: response.status,
+        corsHeader: response.headers.get('Access-Control-Allow-Origin'),
+        apiBaseUrl: API_BASE_URL,
+      });
+    }
+    
     throw new ApiError(error.message || 'API request failed', response.status, error);
   }
 

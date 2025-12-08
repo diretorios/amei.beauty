@@ -23,22 +23,17 @@ After completing card details, the card does not seem to be publishing in produc
 
 **How to fix**:
 
-#### Option A: Set in Cloudflare Pages Dashboard (Recommended)
-1. Go to Cloudflare Dashboard → Workers & Pages → Your Pages Project
-2. Go to Settings → Environment Variables
-3. Add:
-   - **Variable name**: `VITE_API_URL`
-   - **Value**: `https://amei-beauty-api.YOUR_SUBDOMAIN.workers.dev/api`
-   - **Environment**: Production (and Preview if needed)
-4. Redeploy your Pages project
+#### ⚠️ IMPORTANT: Set in GitHub Actions Secrets (REQUIRED)
+**Note**: Vite environment variables are embedded at BUILD time, not runtime. Setting `VITE_API_URL` in Cloudflare Pages dashboard will NOT work because the build already happened in GitHub Actions.
 
-#### Option B: Set in GitHub Actions Secrets (For CI/CD)
 1. Go to your GitHub repository → Settings → Secrets and variables → Actions
 2. Click "New repository secret"
 3. Add:
    - **Name**: `VITE_API_URL`
    - **Value**: `https://amei-beauty-api.YOUR_SUBDOMAIN.workers.dev/api`
 4. Push a new commit to trigger redeployment
+
+**Why not Cloudflare Pages?**: Cloudflare Pages environment variables are runtime-only. Since Vite embeds `VITE_*` variables during the build process (which happens in GitHub Actions), setting it in Cloudflare Pages has no effect. You can safely delete `VITE_API_URL` from Cloudflare Pages settings if it's there.
 
 #### Option C: Verify Workers URL
 First, get your Workers URL:
@@ -146,8 +141,9 @@ The `PublishButton` component now shows visible error messages when publishing f
 
 ## Quick Fix Checklist
 
-- [ ] `VITE_API_URL` is set in Cloudflare Pages environment variables
+- [ ] `VITE_API_URL` is set in **GitHub Actions secrets** (NOT Cloudflare Pages)
 - [ ] `VITE_API_URL` points to correct Workers URL (not localhost)
+- [ ] `VITE_API_URL` is removed from Cloudflare Pages settings (if it was set there)
 - [ ] Workers is deployed and accessible
 - [ ] `ALLOWED_ORIGINS` secret is set in Workers (if using custom domain)
 - [ ] Database migrations are applied

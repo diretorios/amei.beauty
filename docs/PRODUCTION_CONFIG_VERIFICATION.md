@@ -54,9 +54,10 @@ Set via: `npx wrangler secret put <NAME> --config wrangler.workers.toml --env pr
 ### Cloudflare Pages Secrets
 Set via: `npx wrangler pages secret put <NAME>`
 
-- [ ] **`VITE_API_URL`** - Required for frontend API calls
-  - Format: `https://amei-beauty-api.<subdomain>.workers.dev/api`
-  - Or: `https://amei.beauty/api` (if using custom domain route)
+- [ ] **`VITE_API_URL`** - ⚠️ **DO NOT SET HERE** - This won't work!
+  - Vite environment variables are embedded at BUILD time, not runtime
+  - Must be set in GitHub Actions secrets instead (see CI/CD Configuration below)
+  - If you have this set in Cloudflare Pages, you can safely delete it
 
 ---
 

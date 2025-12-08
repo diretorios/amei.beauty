@@ -47,7 +47,11 @@ describe('api', () => {
       (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
         ok: false,
         status: 400,
+        statusText: 'Bad Request',
         json: async () => ({ error: 'Validation failed', message: 'Invalid data' }),
+        headers: {
+          get: vi.fn(() => null),
+        } as unknown as Headers,
       });
 
       const mockCard = {

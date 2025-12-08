@@ -95,17 +95,30 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
       console.error('Publish error:', error);
       const apiError = error instanceof ApiError 
         ? error 
-        : new Error(error instanceof Error ? error.message : 'Failed to publish');
+        : new ApiError(error instanceof Error ? error.message : 'Failed to publish', 0);
       
-      // Set visible error message
+      // Set visible error message with better diagnostics
       let errorMessage = apiError.message;
+      
       if (apiError instanceof ApiError) {
-        if (apiError.status === 0 || apiError.status === 500) {
-          errorMessage = 'Network error. Please check your connection and try again.';
+        if (apiError.status === 0) {
+          // Network error - provide more context
+          const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
+          if (import.meta.env.PROD && API_BASE_URL.includes('localhost')) {
+            errorMessage = 'API configuration error. The application is not properly configured for production. Please contact support.';
+          } else {
+            errorMessage = apiError.message || 'Network error. Please check your connection and try again.';
+          }
+        } else if (apiError.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
         } else if (apiError.status === 401) {
           errorMessage = 'Authentication failed. Please try again.';
         } else if (apiError.status === 409) {
           errorMessage = 'Username already taken. Please choose a different username.';
+        } else if (apiError.status === 403) {
+          errorMessage = 'Access denied. Please check your permissions.';
+        } else if (apiError.status >= 400 && apiError.status < 500) {
+          errorMessage = apiError.message || 'Request error. Please check your input and try again.';
         }
       }
       

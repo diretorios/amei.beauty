@@ -102,7 +102,11 @@ Or simply push any new commit to the `main` branch.
 
 **Why it doesn't work**: The build already happened in GitHub Actions. Cloudflare Pages just serves the pre-built files.
 
-**Fix**: Set it in GitHub Actions secrets instead (see Step 2 above).
+**Fix**: 
+1. **Delete** `VITE_API_URL` from Cloudflare Pages settings (it does nothing there)
+2. Set it in GitHub Actions secrets instead (see Step 2 above)
+
+**You can safely delete `VITE_API_URL` from Cloudflare Pages settings** - it has no effect and will just cause confusion.
 
 ### ❌ Using Wrong URL Format
 
