@@ -90,7 +90,7 @@ export function ProfilePage() {
             onClick={() => {
               window.location.href = '/edit';
             }}
-            disabled={publishedCard && !publishedCard.can_update}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
           >
             {publishedCard && !publishedCard.can_update ? '🔒 ' : ''}
             {t('profile.edit')}

@@ -33,7 +33,7 @@ export function App() {
         // Payment successful - refresh card status
         try {
           const { api } = await import('./lib/api');
-          const updatedCard = await api.getCard(cardId);
+          await api.getCard(cardId);
           // Show success message
           alert('Payment successful! Updates unlocked for 12 months.');
           // Clean URL

@@ -23,11 +23,6 @@ export function UpdateLockStatus({ card, onEndorsementRequest }: UpdateLockStatu
   const canUpdate = now <= freePeriodEnd || now <= updatesEnabledUntil || hasPaid;
   const isLocked = !canUpdate;
 
-  // Calculate days remaining
-  const daysRemaining = freePeriodEnd > now 
-    ? Math.ceil((freePeriodEnd - now) / (24 * 60 * 60 * 1000))
-    : 0;
-
   // Endorsement progress
   const endorsementCount = card.endorsement_count || 0;
   const nextThreshold = endorsementCount < 6 ? 6 : 10;

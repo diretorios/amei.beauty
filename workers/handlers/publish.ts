@@ -87,7 +87,7 @@ export async function handlePublish(
 
     // Convert to row
     const row = cardToRow(card);
-    const now = Date.now();
+    const updatedAt = Date.now();
 
     // Insert or update
     await env.DB.prepare(
@@ -137,8 +137,8 @@ export async function handlePublish(
         row.recommendations_json,
         row.location_json,
         row.referral_code,
-        row.published_at || now,
-        now,
+        row.published_at || updatedAt,
+        updatedAt,
         row.is_active,
         row.is_featured,
         row.subscription_tier,

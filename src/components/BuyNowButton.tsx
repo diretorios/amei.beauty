@@ -16,7 +16,7 @@ export function BuyNowButton({
   cardId,
   amount = 10,
   currency = 'USD',
-  onSuccess,
+  onSuccess: _onSuccess,
   onError,
   className = '',
 }: BuyNowButtonProps) {

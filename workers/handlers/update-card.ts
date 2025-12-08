@@ -61,7 +61,6 @@ export async function handleUpdateCard(
     }
 
     // Merge updates
-    const existingCard = rowToCard(existing);
     const updatedCard: PublishedCard = {
       ...existingCard,
       ...updates,
@@ -102,7 +101,7 @@ export async function handleUpdateCard(
 
     // Update in database
     const row = cardToRow(updatedCard);
-    const now = Date.now();
+    const updatedAt = Date.now();
 
     await env.DB.prepare(
       `UPDATE cards SET
@@ -142,7 +141,7 @@ export async function handleUpdateCard(
         row.certifications_json,
         row.recommendations_json,
         row.location_json,
-        now,
+        updatedAt,
         row.is_active,
         row.is_featured,
         row.subscription_tier,
