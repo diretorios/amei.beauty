@@ -201,6 +201,14 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
         return `https://x.com/${cleanHandle}`;
       case 'youtube':
         return `https://youtube.com/@${cleanHandle}`;
+      case 'linkedin':
+        return `https://linkedin.com/in/${cleanHandle}`;
+      case 'pinterest':
+        return `https://pinterest.com/${cleanHandle}`;
+      case 'snapchat':
+        return `https://snapchat.com/add/${cleanHandle}`;
+      case 'threads':
+        return `https://threads.net/@${cleanHandle}`;
       default:
         return `https://${platform.toLowerCase()}.com/${cleanHandle}`;
     }
@@ -355,7 +363,7 @@ export function OnboardingPage({ onComplete, initialCard }: OnboardingPageProps)
               <h2>{t('onboarding.step6.title')}</h2>
               <p className="onboarding-step-description">{t('onboarding.step6.description')}</p>
               
-              {['instagram', 'facebook', 'tiktok', 'youtube'].map((platform) => {
+              {['instagram', 'facebook', 'tiktok', 'youtube', 'twitter', 'linkedin', 'pinterest', 'snapchat', 'threads'].map((platform) => {
                 const existingLink = socialLinks.find(link => link.platform === platform);
                 const handle = socialHandles[platform] || existingLink?.handle || '';
                 

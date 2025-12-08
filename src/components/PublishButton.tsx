@@ -12,6 +12,22 @@ interface PublishButtonProps {
   onError?: (error: Error) => void;
 }
 
+// Generate default username from full name
+function generateDefaultUsername(fullName: string): string {
+  if (!fullName) return '';
+  
+  // Convert to lowercase and replace spaces with hyphens
+  const base = fullName.toLowerCase().trim().replace(/\s+/g, '-');
+  
+  // Generate 3 random alphanumeric characters
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const randomChars = Array.from({ length: 3 }, () => 
+    chars[Math.floor(Math.random() * chars.length)]
+  ).join('');
+  
+  return `${base}-${randomChars}`;
+}
+
 export function PublishButton({ card, onPublished, onError }: PublishButtonProps) {
   const { t } = useTranslation();
   const [isPublishing, setIsPublishing] = useState(false);
@@ -46,6 +62,9 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
   }, [showModal]);
 
   const handlePublishClick = () => {
+    // Generate default username when opening the modal
+    const defaultUsername = generateDefaultUsername(card.profile.full_name);
+    setUsername(defaultUsername);
     setShowModal(true);
   };
 

@@ -66,6 +66,31 @@
       "label": "YouTube",
       "placeholder": "@tucanal",
       "help": "El handle de tu canal de YouTube sin @"
+    },
+    "twitter": {
+      "label": "Twitter/X",
+      "placeholder": "@tusuario",
+      "help": "Tu nombre de usuario de Twitter/X sin @"
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "placeholder": "tusuario",
+      "help": "Tu nombre de usuario de perfil de LinkedIn"
+    },
+    "pinterest": {
+      "label": "Pinterest",
+      "placeholder": "tusuario",
+      "help": "Tu nombre de usuario de Pinterest"
+    },
+    "snapchat": {
+      "label": "Snapchat",
+      "placeholder": "tusuario",
+      "help": "Tu nombre de usuario de Snapchat"
+    },
+    "threads": {
+      "label": "Threads",
+      "placeholder": "@tusuario",
+      "help": "Tu nombre de usuario de Threads sin @"
     }
   },
   "step7": {

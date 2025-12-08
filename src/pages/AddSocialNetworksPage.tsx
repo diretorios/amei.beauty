@@ -97,6 +97,14 @@ export function AddSocialNetworksPage() {
         return `https://x.com/${cleanHandle}`;
       case 'youtube':
         return `https://youtube.com/@${cleanHandle}`;
+      case 'linkedin':
+        return `https://linkedin.com/in/${cleanHandle}`;
+      case 'pinterest':
+        return `https://pinterest.com/${cleanHandle}`;
+      case 'snapchat':
+        return `https://snapchat.com/add/${cleanHandle}`;
+      case 'threads':
+        return `https://threads.net/@${cleanHandle}`;
       default:
         return `https://${platform.toLowerCase()}.com/${cleanHandle}`;
     }
@@ -177,7 +185,7 @@ export function AddSocialNetworksPage() {
         <p className="onboarding-subtitle">{t('onboarding.step6.description')}</p>
 
         <div className="onboarding-step">
-          {['instagram', 'facebook', 'tiktok', 'youtube'].map((platform) => {
+          {['instagram', 'facebook', 'tiktok', 'youtube', 'twitter', 'linkedin', 'pinterest', 'snapchat', 'threads'].map((platform) => {
             const existingLink = socialLinks.find(link => link.platform === platform);
             const handle = socialHandles[platform] || existingLink?.handle || '';
             
