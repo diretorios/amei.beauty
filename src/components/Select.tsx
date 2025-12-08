@@ -4,6 +4,7 @@ interface SelectProps extends preact.JSX.HTMLAttributes<HTMLSelectElement> {
   labelKey?: string;
   errorKey?: string;
   helpKey?: string;
+  value?: string;
   required?: boolean;
   children: preact.ComponentChildren;
 }
