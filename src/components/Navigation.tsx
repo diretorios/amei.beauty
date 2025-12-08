@@ -18,9 +18,6 @@ export function Navigation({ currentPath }: NavigationProps) {
           <a href="/" className={currentPath === '/' ? 'active' : ''}>
             {t('navigation.profile')}
           </a>
-          <a href="/directory" className={currentPath === '/directory' ? 'active' : ''}>
-            {t('directory.title')}
-          </a>
         </div>
         <LanguageSelector />
       </div>
