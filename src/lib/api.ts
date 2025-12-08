@@ -27,12 +27,27 @@ async function fetchApi(
 ): Promise<Response> {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  // Add Authorization header if cardId is provided
-  const headers: HeadersInit = {
+  // Build headers object
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
   };
   
+  // Merge existing headers if provided
+  if (options.headers) {
+    if (options.headers instanceof Headers) {
+      options.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+    } else if (Array.isArray(options.headers)) {
+      options.headers.forEach(([key, value]) => {
+        headers[key] = value;
+      });
+    } else {
+      Object.assign(headers, options.headers);
+    }
+  }
+  
+  // Add Authorization header if cardId is provided
   if (cardId) {
     const authHeader = getAuthHeader(cardId);
     if (authHeader) {
@@ -60,7 +75,7 @@ export const api = {
   /**
    * Publish a card
    */
-  async publish(card: CardData, username?: string): Promise<PublishedCard> {
+  async publish(card: CardData | PublishedCard, username?: string): Promise<PublishedCard> {
     const publishedCard: Partial<PublishedCard> = {
       ...card,
       username,
@@ -72,10 +87,11 @@ export const api = {
     };
 
     // Pass card ID for auth only if card already has an ID (republishing existing card)
+    const cardId = 'id' in card ? card.id : undefined;
     const response = await fetchApi('/publish', {
       method: 'POST',
       body: JSON.stringify(publishedCard),
-    }, card.id || undefined); // Only pass if card has ID (for republishing)
+    }, cardId); // Only pass if card has ID (for republishing)
 
     const publishedCardData = await response.json();
     
