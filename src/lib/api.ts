@@ -184,6 +184,55 @@ export const api = {
     const response = await fetchApi('/detect-location');
     return response.json();
   },
+
+  /**
+   * Create Stripe Checkout Session (Buy Now button)
+   * Returns checkout URL to redirect user to Stripe payment page
+   */
+  async createCheckoutSession(cardId: string, options?: {
+    success_url?: string;
+    cancel_url?: string;
+  }): Promise<{
+    checkout_url: string;
+    session_id: string;
+    card_id: string;
+    amount: number;
+    currency: string;
+  }> {
+    const response = await fetchApi('/payment/checkout', {
+      method: 'POST',
+      body: JSON.stringify({
+        card_id: cardId,
+        ...options,
+      }),
+    });
+    return response.json();
+  },
+
+  /**
+   * Endorse a card (create endorsement/recommendation)
+   */
+  async endorse(cardId: string, data?: {
+    recommender_name?: string;
+    recommender_whatsapp?: string;
+    share_method?: 'whatsapp' | 'instagram' | 'facebook' | 'link';
+  }): Promise<{
+    success: boolean;
+    card: PublishedCard;
+    endorsement_count: number;
+    updates_unlocked: boolean;
+    updates_months: number;
+    featured: boolean;
+  }> {
+    const response = await fetchApi('/endorse', {
+      method: 'POST',
+      body: JSON.stringify({
+        card_id: cardId,
+        ...data,
+      }),
+    });
+    return response.json();
+  },
 };
 
 export { ApiError };

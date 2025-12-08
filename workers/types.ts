@@ -9,6 +9,8 @@ export interface Env {
   ALLOWED_ORIGINS?: string; // Comma-separated list of allowed origins
   DEEPSEEK_API_KEY?: string;
   SERPAPI_API_KEY?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
 }
 
 export interface CardRow {
@@ -31,5 +33,15 @@ export interface CardRow {
   is_active: number;
   is_featured: number;
   subscription_tier: string;
+  // New fields for endorsement/payment system
+  free_period_end: number | null;
+  updates_enabled_until: number | null;
+  endorsement_count: number;
+  last_endorsement_at: number | null;
+  can_update: number;
+  payment_status: string;
+  payment_date: number | null;
+  payment_amount: number | null;
+  payment_currency: string | null;
 }
 

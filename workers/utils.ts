@@ -44,6 +44,15 @@ export function rowToCard(row: CardRow): PublishedCard {
     is_active: row.is_active === 1,
     is_featured: row.is_featured === 1,
     subscription_tier: row.subscription_tier as 'free' | 'basic' | 'pro',
+    free_period_end: row.free_period_end ? new Date(row.free_period_end).toISOString() : undefined,
+    updates_enabled_until: row.updates_enabled_until ? new Date(row.updates_enabled_until).toISOString() : undefined,
+    endorsement_count: row.endorsement_count,
+    last_endorsement_at: row.last_endorsement_at ? new Date(row.last_endorsement_at).toISOString() : undefined,
+    can_update: row.can_update === 1,
+    payment_status: (row.payment_status || 'none') as 'none' | 'paid' | 'expired',
+    payment_date: row.payment_date ? new Date(row.payment_date).toISOString() : undefined,
+    payment_amount: row.payment_amount || undefined,
+    payment_currency: row.payment_currency || undefined,
     settings: {
       theme: 'system',
       accent_color: '#10B981',
@@ -82,6 +91,15 @@ export function cardToRow(card: PublishedCard): Omit<CardRow, 'id' | 'published_
     is_active: card.is_active ? 1 : 0,
     is_featured: card.is_featured ? 1 : 0,
     subscription_tier: card.subscription_tier,
+    free_period_end: card.free_period_end ? new Date(card.free_period_end).getTime() : null,
+    updates_enabled_until: card.updates_enabled_until ? new Date(card.updates_enabled_until).getTime() : null,
+    endorsement_count: card.endorsement_count || 0,
+    last_endorsement_at: card.last_endorsement_at ? new Date(card.last_endorsement_at).getTime() : null,
+    can_update: card.can_update !== false ? 1 : 0,
+    payment_status: card.payment_status || 'none',
+    payment_date: card.payment_date ? new Date(card.payment_date).getTime() : null,
+    payment_amount: card.payment_amount || null,
+    payment_currency: card.payment_currency || null,
   };
 }
 

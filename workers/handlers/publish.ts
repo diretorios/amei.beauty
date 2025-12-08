@@ -16,6 +16,9 @@ export async function handlePublish(
     const cardData = (await request.json()) as Partial<PublishedCard>;
 
     // Generate ID and referral code if not provided
+    const now = Date.now();
+    const freePeriodEnd = now + (30 * 24 * 60 * 60 * 1000); // 30 days from now
+    
     const card: PublishedCard = {
       id: cardData.id || generateCardId(),
       username: cardData.username,
@@ -31,18 +34,24 @@ export async function handlePublish(
       certifications: cardData.certifications || [],
       recommendations: cardData.recommendations || { count: 0, recent: [] },
       location: cardData.location,
-      published_at: cardData.published_at || new Date().toISOString(),
+      published_at: cardData.published_at || new Date(now).toISOString(),
       updated_at: new Date().toISOString(),
       is_active: true,
       is_featured: cardData.is_featured || false,
       subscription_tier: cardData.subscription_tier || 'free',
+      // Initialize 30-day free period
+      free_period_end: cardData.free_period_end || new Date(freePeriodEnd).toISOString(),
+      updates_enabled_until: cardData.updates_enabled_until || new Date(freePeriodEnd).toISOString(),
+      endorsement_count: cardData.endorsement_count || 0,
+      can_update: cardData.can_update !== undefined ? cardData.can_update : true,
+      payment_status: cardData.payment_status || 'none',
       settings: cardData.settings || {
         theme: 'system',
         accent_color: '#10B981',
         reduce_motion: false,
         language: 'pt-BR',
       },
-      created_at: cardData.created_at || new Date().toISOString(),
+      created_at: cardData.created_at || new Date(now).toISOString(),
     };
 
     // Validate
@@ -86,8 +95,9 @@ export async function handlePublish(
         id, username, profile_json, services_json, social_json, links_json,
         ratings_json, testimonials_json, client_photos_json, badges_json,
         certifications_json, recommendations_json, location_json, referral_code,
-        published_at, updated_at, is_active, is_featured, subscription_tier
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        published_at, updated_at, is_active, is_featured, subscription_tier,
+        free_period_end, updates_enabled_until, endorsement_count, can_update, payment_status
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(id) DO UPDATE SET
         username = excluded.username,
         profile_json = excluded.profile_json,
@@ -104,7 +114,12 @@ export async function handlePublish(
         updated_at = excluded.updated_at,
         is_active = excluded.is_active,
         is_featured = excluded.is_featured,
-        subscription_tier = excluded.subscription_tier
+        subscription_tier = excluded.subscription_tier,
+        free_period_end = excluded.free_period_end,
+        updates_enabled_until = excluded.updates_enabled_until,
+        endorsement_count = excluded.endorsement_count,
+        can_update = excluded.can_update,
+        payment_status = excluded.payment_status
       `
     )
       .bind(
@@ -126,7 +141,12 @@ export async function handlePublish(
         now,
         row.is_active,
         row.is_featured,
-        row.subscription_tier
+        row.subscription_tier,
+        row.free_period_end,
+        row.updates_enabled_until,
+        row.endorsement_count,
+        row.can_update,
+        row.payment_status
       )
       .run();
 

@@ -17,6 +17,18 @@
     }
   },
   "subscribe": "Subscribe",
-  "current_plan": "Current plan"
+  "current_plan": "Current plan",
+  "buy_now": "Buy Now - ${{amount}} {{currency}}",
+  "updates_locked": "Updates Locked",
+  "updates_enabled": "Updates Enabled",
+  "updates_locked_message": "Get endorsements from your customers or pay to unlock updates",
+  "updates_remaining_months": "{{count}} months remaining",
+  "updates_remaining_days": "{{count}} days remaining",
+  "endorsements_progress": "{{current}}/{{needed}} endorsements",
+  "endorsements_benefit_6": "→ 6 months free updates",
+  "endorsements_benefit_10": "→ 12 months + better placement",
+  "or_pay": "OR",
+  "payment_benefit": "$10 USD = 12 months + better placement (equivalent to 10 endorsements)",
+  "request_endorsements": "Request Endorsements from Customers"
 }
 

@@ -139,5 +139,15 @@ export interface PublishedCard extends CardData {
   is_active: boolean;
   is_featured: boolean;
   subscription_tier: 'free' | 'basic' | 'pro';
+  // Endorsement and payment fields
+  free_period_end?: string; // ISO-8601
+  updates_enabled_until?: string; // ISO-8601
+  endorsement_count?: number;
+  last_endorsement_at?: string; // ISO-8601
+  can_update?: boolean;
+  payment_status?: 'none' | 'paid' | 'expired';
+  payment_date?: string; // ISO-8601
+  payment_amount?: number;
+  payment_currency?: string;
 }
 

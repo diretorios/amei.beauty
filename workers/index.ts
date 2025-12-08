@@ -12,6 +12,8 @@ import { handleSearch } from './handlers/search';
 import { handleDirectory } from './handlers/directory';
 import { handleUploadImage } from './handlers/upload-image';
 import { handleDetectLocation } from './handlers/detect-location';
+import { handleEndorse } from './handlers/endorse';
+import { handlePaymentCheckout, handlePaymentWebhook } from './handlers/payment';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -72,6 +74,18 @@ export default {
 
       if (path === '/api/detect-location' && method === 'GET') {
         return handleDetectLocation(request, env, corsHeaders);
+      }
+
+      if (path === '/api/endorse' && method === 'POST') {
+        return handleEndorse(request, env, corsHeaders);
+      }
+
+      if (path === '/api/payment/checkout' && method === 'POST') {
+        return handlePaymentCheckout(request, env, corsHeaders);
+      }
+
+      if (path === '/api/payment/webhook' && method === 'POST') {
+        return handlePaymentWebhook(request, env, corsHeaders);
       }
 
       // Health check

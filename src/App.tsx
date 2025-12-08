@@ -23,6 +23,30 @@ export function App() {
       if (existingCard && existingCard.profile.full_name) {
         setHasProfile(true);
       }
+
+      // Check for payment success/cancel in URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentStatus = urlParams.get('payment');
+      const cardId = urlParams.get('card_id');
+      
+      if (paymentStatus === 'success' && cardId) {
+        // Payment successful - refresh card status
+        try {
+          const { api } = await import('./lib/api');
+          const updatedCard = await api.getCard(cardId);
+          // Show success message
+          alert('Payment successful! Updates unlocked for 12 months.');
+          // Clean URL
+          window.history.replaceState({}, '', window.location.pathname);
+        } catch (error) {
+          console.error('Failed to refresh card after payment:', error);
+        }
+      } else if (paymentStatus === 'cancelled') {
+        // Payment cancelled
+        alert('Payment cancelled. You can try again anytime.');
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
     });
   }, []);
 
