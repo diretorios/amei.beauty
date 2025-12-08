@@ -14,6 +14,7 @@ const mockCard: PublishedCard = {
     headline: 'Especialista em cortes modernos',
     bio: 'Profissional com 10 anos de experiência',
     photo: 'data:image/jpeg;base64,...',
+    website: '',
   },
   services: [
     { id: '1', name: 'Corte', price: 'R$ 50', description: 'Corte moderno' },

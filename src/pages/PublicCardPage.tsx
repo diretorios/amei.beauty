@@ -44,7 +44,9 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
   if (isLoading) {
     return (
       <div className="public-card-page">
-        <div className="loading">{t('loading')}</div>
+        <div className="loading" role="status" aria-live="polite" aria-label={t('loading')}>
+          {t('loading')}
+        </div>
       </div>
     );
   }
@@ -61,9 +63,9 @@ export function PublicCardPage({ cardId, username }: PublicCardPageProps) {
   }
 
   return (
-    <div className="public-card-page">
+    <main id="main-content" className="public-card-page" role="main">
       <CardDisplay card={card} showWhatsAppButton={true} isPreview={false} />
-    </div>
+    </main>
   );
 }
 

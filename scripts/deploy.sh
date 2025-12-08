@@ -13,9 +13,38 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+# Try to load Node.js from common version managers
+if ! command -v node &> /dev/null; then
+    # Try loading from NVM
+    if [ -s "$HOME/.nvm/nvm.sh" ]; then
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+    fi
+    
+    # Try loading from fnm
+    if ! command -v node &> /dev/null && [ -s "$HOME/.local/share/fnm/fnm" ]; then
+        eval "$(fnm env --use-on-cd)"
+    fi
+    
+    # Try common Node.js installation paths
+    if ! command -v node &> /dev/null; then
+        for node_path in \
+            "$HOME/.local/share/nvm/v25.2.1/bin/node" \
+            "$HOME/.local/share/nvm/current/bin/node" \
+            "/usr/local/bin/node" \
+            "/usr/bin/node"; do
+            if [ -x "$node_path" ]; then
+                export PATH="$(dirname "$node_path"):$PATH"
+                break
+            fi
+        done
+    fi
+fi
+
 # Check prerequisites
 if ! command -v node &> /dev/null; then
     echo -e "${RED}❌ Node.js is not installed${NC}"
+    echo -e "${YELLOW}   Please install Node.js or ensure it's in your PATH${NC}"
     exit 1
 fi
 

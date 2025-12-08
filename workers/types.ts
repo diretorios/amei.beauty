@@ -6,6 +6,7 @@ export interface Env {
   DB: D1Database;
   IMAGES: R2Bucket;
   ENVIRONMENT: string;
+  ALLOWED_ORIGINS?: string; // Comma-separated list of allowed origins
   DEEPSEEK_API_KEY?: string;
   SERPAPI_API_KEY?: string;
 }

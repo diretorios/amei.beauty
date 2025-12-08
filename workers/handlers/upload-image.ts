@@ -24,11 +24,39 @@ export async function handleUploadImage(
       );
     }
 
-    // Validate file type
+    // Validate file type (check both MIME type and extension)
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+    const fileExtension = '.' + (file.name.split('.').pop() || '').toLowerCase();
+    
+    if (!allowedTypes.includes(file.type) || !allowedExtensions.includes(fileExtension)) {
       return new Response(
-        JSON.stringify({ error: 'Invalid file type. Only images are allowed.' }),
+        JSON.stringify({ error: 'Invalid file type. Only images (JPEG, PNG, WebP, GIF) are allowed.' }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    
+    // Validate file content (magic bytes check)
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer.slice(0, 12));
+    const magicBytes = Array.from(uint8Array)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('')
+      .toUpperCase();
+    
+    // Check magic bytes for common image formats
+    const isValidImage =
+      magicBytes.startsWith('FFD8FF') || // JPEG
+      magicBytes.startsWith('89504E47') || // PNG
+      magicBytes.startsWith('474946') || // GIF
+      magicBytes.startsWith('52494646') && uint8Array[8] === 0x57 && uint8Array[9] === 0x45 && uint8Array[10] === 0x42 && uint8Array[11] === 0x50; // WebP
+    
+    if (!isValidImage) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid file content. File does not appear to be a valid image.' }),
         {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -47,15 +75,18 @@ export async function handleUploadImage(
         }
       );
     }
+    
+    // Validate image dimensions (optional - would require image processing)
+    // For now, we rely on file size limit and content validation
 
-    // Generate unique filename
+    // Generate unique filename (sanitize extension)
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 11);
-    const extension = file.name.split('.').pop() || 'jpg';
+    // Use extension from validated file extension, not original filename
+    const extension = fileExtension.substring(1); // Remove the dot
     const filename = `${timestamp}-${random}.${extension}`;
 
-    // Upload to R2
-    const arrayBuffer = await file.arrayBuffer();
+    // Upload to R2 (arrayBuffer already created during validation)
     await env.IMAGES.put(filename, arrayBuffer, {
       httpMetadata: {
         contentType: file.type,

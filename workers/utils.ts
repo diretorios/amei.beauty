@@ -4,6 +4,7 @@
 
 import type { CardRow } from './types';
 import type { PublishedCard } from '../src/models/types';
+import { validateUsername, validateUrl, validateWhatsAppNumber, validateTextLength } from './utils/validation';
 
 /**
  * Generate a unique ID for cards
@@ -90,14 +91,67 @@ export function cardToRow(card: PublishedCard): Omit<CardRow, 'id' | 'published_
 export function validateCard(card: Partial<PublishedCard>): string[] {
   const errors: string[] = [];
 
+  // Validate full_name
   if (!card.profile?.full_name) {
     errors.push('Profile full_name is required');
+  } else {
+    const nameValidation = validateTextLength(card.profile.full_name, 'Full name', 100, 1);
+    if (!nameValidation.valid) {
+      errors.push(nameValidation.error || 'Invalid full name');
+    }
   }
 
+  // Validate whatsapp
   if (!card.profile?.whatsapp) {
     errors.push('Profile whatsapp is required');
+  } else {
+    const whatsappValidation = validateWhatsAppNumber(card.profile.whatsapp);
+    if (!whatsappValidation.valid) {
+      errors.push(whatsappValidation.error || 'Invalid WhatsApp number');
+    }
   }
 
+  // Validate profession
+  if (card.profile?.profession) {
+    const professionValidation = validateTextLength(card.profile.profession, 'Profession', 100);
+    if (!professionValidation.valid) {
+      errors.push(professionValidation.error || 'Invalid profession');
+    }
+  }
+
+  // Validate username if provided
+  if (card.username) {
+    const usernameValidation = validateUsername(card.username);
+    if (!usernameValidation.valid) {
+      errors.push(usernameValidation.error || 'Invalid username');
+    }
+  }
+
+  // Validate website URL if provided
+  if (card.profile?.website) {
+    const urlValidation = validateUrl(card.profile.website);
+    if (!urlValidation.valid) {
+      errors.push(urlValidation.error || 'Invalid website URL');
+    }
+  }
+
+  // Validate bio length
+  if (card.profile?.bio) {
+    const bioValidation = validateTextLength(card.profile.bio, 'Bio', 1000);
+    if (!bioValidation.valid) {
+      errors.push(bioValidation.error || 'Bio too long');
+    }
+  }
+
+  // Validate headline length
+  if (card.profile?.headline) {
+    const headlineValidation = validateTextLength(card.profile.headline, 'Headline', 200);
+    if (!headlineValidation.valid) {
+      errors.push(headlineValidation.error || 'Headline too long');
+    }
+  }
+
+  // Validate referral code
   if (!card.referral_code) {
     errors.push('Referral code is required');
   }

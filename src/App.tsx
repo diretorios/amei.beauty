@@ -27,7 +27,11 @@ export function App() {
   }, []);
 
   if (!isInitialized) {
-    return <div>Loading...</div>;
+    return (
+      <div role="status" aria-live="polite" aria-label="Loading application">
+        Loading...
+      </div>
+    );
   }
 
   // Show onboarding if no profile exists (unless viewing public card)

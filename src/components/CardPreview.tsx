@@ -1,6 +1,7 @@
 import { useTranslation } from '../hooks/useTranslation';
 import { openWhatsApp } from '../lib/whatsapp';
 import type { PublishedCard } from '../models/types';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface CardPreviewProps {
   card: PublishedCard;
@@ -11,17 +12,34 @@ export function CardPreview({ card, onClick }: CardPreviewProps) {
   const { t } = useTranslation();
 
   const handleWhatsApp = (e: Event) => {
+    e.preventDefault();
     e.stopPropagation();
-    openWhatsApp(card.profile.whatsapp);
+    if (card.profile.whatsapp) {
+      openWhatsApp(card.profile.whatsapp);
+    }
   };
 
   const cardUrl = card.username 
     ? `/${card.username}` 
     : `/card/${card.id}`;
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (onClick) onClick();
+    }
+  };
+
   return (
-    <div className="card-preview" onClick={onClick}>
-      <a href={cardUrl} className="card-preview-link">
+    <div 
+      className="card-preview" 
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role="article"
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={`Card for ${card.profile.full_name}`}
+    >
+      <a href={cardUrl} className="card-preview-link" aria-label={`View ${card.profile.full_name}'s card`}>
         {card.profile.photo && (
           <div className="card-preview-photo">
             <img src={card.profile.photo} alt={card.profile.full_name} />
@@ -29,7 +47,19 @@ export function CardPreview({ card, onClick }: CardPreviewProps) {
         )}
         <div className="card-preview-content">
           <h3 className="card-preview-name">{card.profile.full_name}</h3>
-          <p className="card-preview-profession">{card.profile.profession}</p>
+          <div className="card-preview-profession-row">
+            <p className="card-preview-profession">{card.profile.profession}</p>
+            {card.profile.whatsapp && (
+              <button
+                className="card-preview-whatsapp-inline"
+                onClick={handleWhatsApp}
+                aria-label="Contact via WhatsApp"
+                title="Contact via WhatsApp"
+              >
+                <WhatsAppIcon size={20} />
+              </button>
+            )}
+          </div>
           {card.profile.headline && (
             <p className="card-preview-headline">{card.profile.headline}</p>
           )}
@@ -69,7 +99,7 @@ export function CardPreview({ card, onClick }: CardPreviewProps) {
         onClick={handleWhatsApp}
         aria-label="Contact via WhatsApp"
       >
-        📱 WhatsApp
+        <WhatsAppIcon size={20} /> WhatsApp
       </button>
     </div>
   );

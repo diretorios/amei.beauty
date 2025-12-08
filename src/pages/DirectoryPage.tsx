@@ -95,7 +95,7 @@ export function DirectoryPage() {
   ];
 
   return (
-    <div className="directory-page">
+    <main id="main-content" className="directory-page" role="main">
       <header className="directory-header">
         <h1>{t('directory.title')}</h1>
         <p className="directory-subtitle">
@@ -180,11 +180,11 @@ export function DirectoryPage() {
       )}
 
       {isLoading ? (
-        <div className="directory-loading">
+        <div className="directory-loading" role="status" aria-live="polite" aria-label={t('loading')}>
           <p>{t('loading')}</p>
         </div>
       ) : cards.length === 0 ? (
-        <div className="directory-empty">
+        <div className="directory-empty" role="status" aria-live="polite">
           <p>{t('directory.empty')}</p>
         </div>
       ) : (
@@ -218,7 +218,7 @@ export function DirectoryPage() {
           )}
         </>
       )}
-    </div>
+    </main>
   );
 }
 

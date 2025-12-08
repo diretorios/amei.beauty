@@ -1,6 +1,7 @@
 import { useTranslation } from '../hooks/useTranslation';
 import { openWhatsApp } from '../lib/whatsapp';
 import type { CardData, PublishedCard } from '../models/types';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 interface CardDisplayProps {
   card: CardData | PublishedCard;
@@ -33,7 +34,19 @@ export function CardDisplay({ card, showWhatsAppButton = true, isPreview = false
 
       <div className="card-header">
         <h1>{card.profile.full_name}</h1>
-        <p className="profession">{card.profile.profession}</p>
+        <div className="profession-row">
+          <p className="profession">{card.profile.profession}</p>
+          {card.profile.whatsapp && (
+            <button
+              className="whatsapp-button-inline"
+              onClick={handleWhatsApp}
+              aria-label="Contact via WhatsApp"
+              title="Contact via WhatsApp"
+            >
+              <WhatsAppIcon size={20} />
+            </button>
+          )}
+        </div>
         {card.profile.headline && <p className="headline">{card.profile.headline}</p>}
       </div>
 
@@ -117,7 +130,7 @@ export function CardDisplay({ card, showWhatsAppButton = true, isPreview = false
       {showWhatsAppButton && card.profile.whatsapp && (
         <div className="card-actions">
           <button className="btn btn-primary whatsapp-button" onClick={handleWhatsApp}>
-            📱 {t('buttons.share')} WhatsApp
+            <WhatsAppIcon size={20} /> {t('buttons.share')} WhatsApp
           </button>
         </div>
       )}

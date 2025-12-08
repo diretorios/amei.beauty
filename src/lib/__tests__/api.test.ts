@@ -13,7 +13,7 @@ describe('api', () => {
     it('should publish a card successfully', async () => {
       const mockCard = {
         id: '123',
-        profile: { full_name: 'Test', profession: 'Test', whatsapp: '123', headline: '', bio: '', photo: null },
+        profile: { full_name: 'Test', profession: 'Test', whatsapp: '123', headline: '', bio: '', photo: null, website: '' },
         services: [],
         social: [],
         links: [],
@@ -51,7 +51,7 @@ describe('api', () => {
       });
 
       const mockCard = {
-        profile: { full_name: '', profession: '', whatsapp: '', headline: '', bio: '', photo: null },
+        profile: { full_name: '', profession: '', whatsapp: '', headline: '', bio: '', photo: null, website: '' },
         services: [],
         social: [],
         links: [],

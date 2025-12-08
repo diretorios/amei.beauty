@@ -24,7 +24,14 @@ export function Input({ labelKey, errorKey, helpKey, className = '', ...props }:
       <input
         className={`input ${hasError ? 'input-error' : ''} ${className}`.trim()}
         aria-invalid={hasError}
-        aria-describedby={helpKey ? `${props.id}-help` : undefined}
+        aria-describedby={
+          hasError && errorKey
+            ? `${props.id}-error${helpKey ? ` ${props.id}-help` : ''}`
+            : helpKey
+            ? `${props.id}-help`
+            : undefined
+        }
+        aria-errormessage={hasError && errorKey ? `${props.id}-error` : undefined}
         {...props}
       />
       {helpKey && !hasError && (
@@ -33,7 +40,12 @@ export function Input({ labelKey, errorKey, helpKey, className = '', ...props }:
         </div>
       )}
       {errorKey && (
-        <div className="input-error-message" role="alert">
+        <div 
+          className="input-error-message" 
+          role="alert"
+          id={`${props.id}-error`}
+          aria-live="polite"
+        >
           {t(errorKey)}
         </div>
       )}

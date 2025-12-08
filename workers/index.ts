@@ -19,11 +19,17 @@ export default {
     const path = url.pathname;
     const method = request.method;
 
-    // CORS headers
+    // CORS headers - restrict origins in production
+    const allowedOrigins = env.ALLOWED_ORIGINS?.split(',') || ['*'];
+    const origin = request.headers.get('Origin') || '';
+    const isAllowedOrigin = allowedOrigins.includes('*') || allowedOrigins.includes(origin);
+    const corsOrigin = isAllowedOrigin ? origin || '*' : allowedOrigins[0];
+
     const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400', // 24 hours
     };
 
     // Handle preflight requests
@@ -80,11 +86,15 @@ export default {
 
       return new Response('Not Found', { status: 404, headers: corsHeaders });
     } catch (error) {
+      // Log detailed error server-side only
       console.error('Worker error:', error);
+      
+      // Return generic error message to client (don't expose internal details)
+      const isDevelopment = env.ENVIRONMENT === 'development';
       return new Response(
         JSON.stringify({
           error: 'Internal Server Error',
-          message: error instanceof Error ? error.message : 'Unknown error',
+          message: isDevelopment && error instanceof Error ? error.message : 'An error occurred. Please try again later.',
         }),
         {
           status: 500,

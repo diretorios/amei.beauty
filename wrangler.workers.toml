@@ -21,10 +21,15 @@ bucket_name = "amei-beauty-images"
 # Environment variables
 [vars]
 ENVIRONMENT = "development"
+# CORS: Set ALLOWED_ORIGINS as comma-separated list (e.g., "https://amei.beauty,https://www.amei.beauty")
+# Leave unset or use "*" for development (allows all origins)
+# For production, set via: npx wrangler secret put ALLOWED_ORIGINS --config wrangler.workers.toml
+# Or: npx wrangler secret put ALLOWED_ORIGINS --name amei-beauty-api
 # Note: API keys should be set as secrets in production:
 # For Cloudflare Workers (this file):
 #   npx wrangler secret put DEEPSEEK_API_KEY
 #   npx wrangler secret put SERPAPI_API_KEY
+#   npx wrangler secret put ALLOWED_ORIGINS
 # For Cloudflare Pages:
 #   npx wrangler pages secret put DEEPSEEK_API_KEY
 #   npx wrangler pages secret put SERPAPI_API_KEY
@@ -33,6 +38,7 @@ ENVIRONMENT = "development"
 # Production environment
 [env.production]
 vars = { ENVIRONMENT = "production" }
+# Set ALLOWED_ORIGINS as secret in production
 
 # Routes (for Pages integration)
 # routes = [

@@ -65,11 +65,45 @@
   color: var(--color-gray-900);
 }
 
+.profession-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
 .profession {
   font-size: var(--font-size-xl);
   color: var(--color-gray-600);
   font-weight: var(--font-weight-medium);
-  margin-bottom: var(--spacing-sm);
+  margin: 0;
+}
+
+.whatsapp-button-inline {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+}
+
+.whatsapp-button-inline:hover {
+  background: var(--color-primary-dark);
+  transform: scale(1.05);
+}
+
+.whatsapp-button-inline:active {
+  transform: scale(0.95);
 }
 
 .headline {
@@ -179,6 +213,7 @@
   font-size: var(--font-size-lg);
   padding: var(--spacing-md) var(--spacing-xl);
   min-width: 200px;
+  gap: var(--spacing-sm);
 }
 
 .card-badges {
