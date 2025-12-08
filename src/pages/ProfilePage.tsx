@@ -116,7 +116,7 @@ export function ProfilePage() {
           <Button
             variant="outline"
             onClick={() => {
-              window.location.href = '/edit';
+              window.location.href = '/add-services-and-prices';
             }}
             disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
           >
