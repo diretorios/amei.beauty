@@ -223,7 +223,12 @@ export async function handlePublish(
     const publishedCard = rowToCard(result);
 
     // Return the token in the response (only for new cards or legacy cards being upgraded)
-    const response: any = { ...publishedCard };
+    type PublishResponse = PublishedCard & {
+      owner_token?: string;
+      token_warning?: string;
+    };
+    
+    const response: PublishResponse = { ...publishedCard };
     if (ownerToken) {
       response.owner_token = ownerToken; // Include token in response
       response.token_warning = 'Save this token securely. You will need it to update or delete this card.';
