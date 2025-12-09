@@ -92,10 +92,31 @@ jobs:
           else
             echo "✅ VITE_API_URL is set"
             echo "Value: ${{ secrets.VITE_API_URL }}"
+            # Validate URL format
+            if [[ "${{ secrets.VITE_API_URL }}" == *"localhost"* ]]; then
+              echo "::error::VITE_API_URL contains 'localhost' - this won't work in production!"
+              echo "Please set it to your Workers URL: https://amei-beauty-api.adsventures.workers.dev/api"
+              exit 1
+            fi
+            if [[ "${{ secrets.VITE_API_URL }}" != *"workers.dev"* ]] && [[ "${{ secrets.VITE_API_URL }}" != *"amei.beauty"* ]]; then
+              echo "::warning::VITE_API_URL doesn't look like a production URL"
+              echo "Expected format: https://amei-beauty-api.adsventures.workers.dev/api"
+            fi
+            if [[ "${{ secrets.VITE_API_URL }}" != */api ]]; then
+              echo "::warning::VITE_API_URL should end with /api"
+            fi
           fi
 
       - name: Build frontend
-        run: npm run build
+        run: |
+          echo "Building with VITE_API_URL=${{ secrets.VITE_API_URL }}"
+          npm run build
+          echo "Build completed. Checking if API URL was embedded correctly..."
+          # Check if localhost appears in built files (should not in production)
+          if grep -r "localhost:8787" dist/ 2>/dev/null; then
+            echo "::error::Build still contains localhost URLs! VITE_API_URL may not have been applied correctly."
+            exit 1
+          fi
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
