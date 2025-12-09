@@ -8,7 +8,8 @@
     "headline": "Título profesional",
     "bio": "Sobre ti",
     "whatsapp": "WhatsApp",
-    "photo": "Foto profesional"
+    "photo": "Foto profesional",
+    "username": "Nombre de usuario"
   },
   "placeholders": {
     "headline": "Ej: Peluquera especializada en cortes modernos",

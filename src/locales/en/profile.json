@@ -8,7 +8,8 @@
     "headline": "Professional headline",
     "bio": "About you",
     "whatsapp": "WhatsApp",
-    "photo": "Professional photo"
+    "photo": "Professional photo",
+    "username": "Username"
   },
   "placeholders": {
     "headline": "E.g., Hairdresser specialized in modern cuts",
