@@ -90,6 +90,28 @@ export default [
       ]
     }
   },
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.es2020
+      },
+      ecmaVersion: 2020,
+      sourceType: 'module'
+    },
+    rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ],
+      'no-undef': 'off' // Node.js globals are provided
+    }
+  },
   prettierConfig,
   {
     ignores: ['dist/**', 'node_modules/**', '*.config.js', '*.config.ts', 'eslint.config.js']

@@ -53,7 +53,8 @@ describe('Auth Integration Tests', () => {
       const publishResponse = await handlePublish(publishRequest, env, corsHeaders);
       expect(publishResponse.status).toBe(200);
       const publishedCard = await publishResponse.json();
-      const token = publishedCard.owner_token;
+      // Token is returned but not used in this test
+      expect(publishedCard.owner_token).toBeDefined();
 
       // Try to republish without token
       const republishRequest = new Request('http://localhost/api/publish', {
@@ -112,7 +113,7 @@ describe('Auth Integration Tests', () => {
       // Manually insert a legacy card into the database
       const token = await generateOwnerToken();
       const secret = env.AUTH_SECRET || 'test-secret-key-for-testing-only';
-      const hash = await hashToken(token, secret);
+      await hashToken(token, secret); // Hash is computed but not stored for legacy cards
       
       // Insert card with NULL token hash (simulating legacy card)
       await env.DB.prepare(

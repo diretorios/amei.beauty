@@ -106,7 +106,7 @@ function checkBuildFiles() {
       if (apiUrlMatch) {
         apiUrlMatch.forEach(url => foundUrls.add(url));
       }
-    } catch (err) {
+    } catch (_err) {
       // Skip files that can't be read
     }
   }

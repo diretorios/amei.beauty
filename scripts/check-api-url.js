@@ -80,13 +80,13 @@ if (envApiUrl) {
 // Check 4: Build output (if exists)
 console.log('\n4. Checking build output (dist/)');
 try {
-  const distIndex = readFileSync(join(rootDir, 'dist/index.html'), 'utf-8');
+  readFileSync(join(rootDir, 'dist/index.html'), 'utf-8');
   console.log('   ✅ Build output exists');
   
   // Try to find API URL in built files
   // Note: Vite embeds env vars, so we'd need to check JS files
   console.log('   ℹ️  To check embedded API URL, inspect dist/assets/*.js files');
-} catch (error) {
+} catch (_error) {
   console.log('   ⚠️  No build output found (run npm run build first)');
 }
 

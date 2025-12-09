@@ -3,7 +3,6 @@
  */
 
 import type { Env } from '../types';
-import { hashToken } from '../utils/auth';
 
 /**
  * Simple in-memory mock for D1Database
@@ -295,7 +294,6 @@ class MockD1PreparedStatement implements D1PreparedStatement {
     if (!whereMatch) return null;
 
     const whereClause = whereMatch[1].trim();
-    const clause: any = { type: 'AND', conditions: [] };
 
     // Handle (id = ? OR username = ?) AND is_active = 1 (literal, not binding)
     if (whereClause.includes('(id = ? OR username = ?)') && whereClause.includes('is_active = 1')) {

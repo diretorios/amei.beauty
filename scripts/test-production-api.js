@@ -85,11 +85,11 @@ function extractApiUrlFromBuild() {
             return matches[0];
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // Continue to next file
       }
     }
-  } catch (err) {
+  } catch (_err) {
     // Ignore errors
   }
   

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   generateOwnerToken,
   hashToken,
@@ -171,7 +171,7 @@ describe('auth utilities', () => {
 
     it('should reject token with wrong hash', async () => {
       const token = 'test-token';
-      const correctHash = await hashToken(token, secret);
+      await hashToken(token, secret); // Compute hash but don't use it
       const wrongHash = await hashToken('different-token', secret);
 
       const isValid = await verifyToken(token, wrongHash, secret);

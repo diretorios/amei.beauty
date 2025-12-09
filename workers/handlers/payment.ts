@@ -6,7 +6,6 @@
 
 import Stripe from 'stripe';
 import type { Env } from '../types';
-import { rowToCard } from '../utils';
 
 const PAYMENT_AMOUNT = 10; // $10 USD
 const PAYMENT_CURRENCY = 'usd';
