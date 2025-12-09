@@ -4,12 +4,15 @@
 
 import type { Env } from '../types';
 
+// Type for database row (can be any object)
+type DatabaseRow = Record<string, unknown>;
+
 /**
  * Simple in-memory mock for D1Database
  * Implements basic D1 operations needed for testing
  */
 export class MockD1Database implements D1Database {
-  private data: Map<string, any[]> = new Map();
+  private data: Map<string, DatabaseRow[]> = new Map();
 
   prepare(query: string): D1PreparedStatement {
     return new MockD1PreparedStatement(query, this.data);
@@ -31,22 +34,33 @@ export class MockD1Database implements D1Database {
   }
 }
 
+// Type for WHERE clause conditions
+type WhereCondition = {
+  field?: string;
+  value?: unknown;
+  operator?: string;
+  type?: 'AND' | 'OR';
+  field2?: string;
+  value2?: unknown;
+  conditions?: WhereCondition[];
+};
+
 class MockD1PreparedStatement implements D1PreparedStatement {
   private query: string;
-  private data: Map<string, any[]>;
-  private bindings: any[] = [];
+  private data: Map<string, DatabaseRow[]>;
+  private bindings: unknown[] = [];
 
-  constructor(query: string, data: Map<string, any[]>) {
+  constructor(query: string, data: Map<string, DatabaseRow[]>) {
     this.query = query;
     this.data = data;
   }
 
-  bind(...values: any[]): D1PreparedStatement {
+  bind(...values: unknown[]): D1PreparedStatement {
     this.bindings = values;
     return this;
   }
 
-  async first<T = any>(): Promise<T | null> {
+  async first<T = unknown>(): Promise<T | null> {
     const result = await this.all<T>();
     return result.results.length > 0 ? result.results[0] : null;
   }
@@ -63,7 +77,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
 
     // Handle INSERT queries
     if (this.query.trim().toUpperCase().startsWith('INSERT')) {
-      const row: any = {};
+      const row: DatabaseRow = {};
       const columns = this.extractInsertColumns(this.query);
       
       columns.forEach((col, idx) => {
@@ -72,7 +86,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
 
       // Handle ON CONFLICT UPDATE
       if (this.query.includes('ON CONFLICT')) {
-        const existingIdx = table.findIndex((r: any) => r.id === row.id);
+        const existingIdx = table.findIndex((r: DatabaseRow) => r.id === row.id);
         if (existingIdx >= 0) {
           // Extract columns that are updated in ON CONFLICT clause
           const updateCols = this.extractConflictUpdateColumns(this.query);
@@ -134,7 +148,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
       
       // Also handle literal values in SET clause (e.g., is_active = 0)
       const setClauseMatch = this.query.match(/SET\s+([^W]+)/i);
-      const literalValues: Record<string, any> = {};
+      const literalValues: Record<string, unknown> = {};
       if (setClauseMatch) {
         const setClause = setClauseMatch[1];
         setClause.split(',').forEach((part) => {
@@ -165,7 +179,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
           let bindingIdx = 0;
           updateCols.forEach((col) => {
             // Check if this column has a literal value
-            if (literalValues.hasOwnProperty(col)) {
+            if (Object.hasOwn(literalValues, col)) {
               table[rowIdx][col] = literalValues[col];
             } else if (bindingIdx < numBindings) {
               // Use binding value
@@ -192,7 +206,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
     };
   }
 
-  async all<T = any>(): Promise<D1Result<T>> {
+  async all<T = unknown>(): Promise<D1Result<T>> {
     const tableName = this.getTableName();
     let table = this.data.get(tableName) || [];
 
@@ -208,8 +222,8 @@ class MockD1PreparedStatement implements D1PreparedStatement {
       // Handle SELECT specific columns
       const selectCols = this.extractSelectColumns(this.query);
       if (selectCols.length > 0 && !selectCols.includes('*')) {
-        results = results.map((row: any) => {
-          const filtered: any = {};
+        results = results.map((row: DatabaseRow) => {
+          const filtered: DatabaseRow = {};
           selectCols.forEach((col) => {
             filtered[col] = row[col];
           });
@@ -287,7 +301,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
       .filter((col) => col.length > 0);
   }
 
-  private extractWhereClause(query: string): any {
+  private extractWhereClause(query: string): WhereCondition | null {
     if (!query.includes('WHERE')) return null;
 
     const whereMatch = query.match(/WHERE\s+(.+)/i);
@@ -367,7 +381,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
     return null;
   }
 
-  private findMatchingRows(table: any[], whereClause: any): number[] {
+  private findMatchingRows(table: DatabaseRow[], whereClause: WhereCondition | null): number[] {
     if (!whereClause) return table.map((_, idx) => idx);
 
     const matches: number[] = [];
@@ -391,7 +405,7 @@ class MockD1PreparedStatement implements D1PreparedStatement {
         );
       } else if (whereClause.type === 'AND' && whereClause.conditions) {
         // AND conditions
-        matchesClause = whereClause.conditions.every((cond: any) => {
+        matchesClause = whereClause.conditions.every((cond: WhereCondition) => {
           if (cond.type === 'OR') {
             return (
               row[cond.field] === cond.value || row[cond.field2] === cond.value2
@@ -443,7 +457,7 @@ export function createCorsHeaders(): Record<string, string> {
 /**
  * Create a test card data object
  */
-export function createTestCard(overrides: any = {}): any {
+export function createTestCard(overrides: Partial<DatabaseRow> = {}): DatabaseRow {
   const now = Date.now();
   return {
     profile: {
