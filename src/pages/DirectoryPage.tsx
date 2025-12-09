@@ -89,8 +89,38 @@ export function DirectoryPage() {
     }
   }, [searchQuery, selectedCategory, selectedLocation, page, limit, announce, t]);
 
+  // Track the last loaded parameters to prevent duplicate requests
+  const lastLoadParamsRef = useRef<string>('');
+
+  // Check if directory needs refresh (e.g., after publishing a card)
+  // This must run BEFORE the main load effect
+  useEffect(() => {
+    const needsRefresh = sessionStorage.getItem('directory_needs_refresh') === 'true';
+    if (needsRefresh) {
+      sessionStorage.removeItem('directory_needs_refresh');
+      // Reset to page 1 to show newly published card
+      if (page !== 1) {
+        setPage(1);
+        // Don't call load functions here - let the main effect handle it when page changes
+        return;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Load directory when filters change
   useEffect(() => {
+    // Create a unique key for the current request parameters
+    const requestKey = `${searchQuery}|${selectedCategory}|${selectedLocation}|${page}|${showFeatured}`;
+    
+    // Skip if we're already loading the exact same parameters (prevents duplicate calls)
+    if (lastLoadParamsRef.current === requestKey) {
+      return;
+    }
+
+    // Update the last loaded parameters before making the request
+    lastLoadParamsRef.current = requestKey;
+
     if (searchQuery || selectedCategory || selectedLocation) {
       performSearch();
     } else {
@@ -100,26 +130,6 @@ export function DirectoryPage() {
     // This prevents flickering caused by unnecessary re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, selectedCategory, selectedLocation, page, showFeatured]);
-
-  // Check if directory needs refresh (e.g., after publishing a card)
-  useEffect(() => {
-    const needsRefresh = sessionStorage.getItem('directory_needs_refresh') === 'true';
-    if (needsRefresh) {
-      sessionStorage.removeItem('directory_needs_refresh');
-      // Reset to page 1 and refresh to show newly published card
-      if (page !== 1) {
-        setPage(1);
-      } else {
-        // Already on page 1, trigger refresh
-        if (searchQuery || selectedCategory || selectedLocation) {
-          performSearch();
-        } else {
-          loadDirectory();
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSearch = (e: Event) => {
     e.preventDefault();
