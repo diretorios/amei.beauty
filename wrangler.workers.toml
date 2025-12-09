@@ -28,8 +28,8 @@ id = "4a757bc6c1ed4cd297a88492db23e86c"  # Using the same KV namespace as Pages
 preview_id = "e7ec951de82742b1bfc91419f7c9a557"  # Using the same preview namespace as Pages
 
 # Environment variables
-[vars]
-ENVIRONMENT = "development"
+# [vars]
+# ENVIRONMENT = "development"
 # RATE_LIMIT_APP_PREFIX: Unique prefix for rate limit keys (defaults to 'amei-beauty')
 # Set this if sharing RATE_LIMIT_KV namespace with other applications to avoid key conflicts
 # RATE_LIMIT_APP_PREFIX = "amei-beauty"
