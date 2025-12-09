@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'preact/hooks';
+import { useState, useEffect, useCallback, useRef } from 'preact/hooks';
 import { useTranslation } from '../hooks/useTranslation';
 import { api, ApiError } from '../lib/api';
 import { CardPreview } from '../components/CardPreview';
@@ -89,13 +89,37 @@ export function DirectoryPage() {
     }
   }, [searchQuery, selectedCategory, selectedLocation, page, limit, announce, t]);
 
+  // Load directory when filters change
   useEffect(() => {
     if (searchQuery || selectedCategory || selectedLocation) {
       performSearch();
     } else {
       loadDirectory();
     }
-  }, [searchQuery, selectedCategory, selectedLocation, page, showFeatured, performSearch, loadDirectory]);
+    // Only depend on actual state values, not the callback functions
+    // This prevents flickering caused by unnecessary re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, selectedCategory, selectedLocation, page, showFeatured]);
+
+  // Check if directory needs refresh (e.g., after publishing a card)
+  useEffect(() => {
+    const needsRefresh = sessionStorage.getItem('directory_needs_refresh') === 'true';
+    if (needsRefresh) {
+      sessionStorage.removeItem('directory_needs_refresh');
+      // Reset to page 1 and refresh to show newly published card
+      if (page !== 1) {
+        setPage(1);
+      } else {
+        // Already on page 1, trigger refresh
+        if (searchQuery || selectedCategory || selectedLocation) {
+          performSearch();
+        } else {
+          loadDirectory();
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = (e: Event) => {
     e.preventDefault();

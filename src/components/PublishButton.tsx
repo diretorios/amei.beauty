@@ -89,6 +89,9 @@ export function PublishButton({ card, onPublished, onError }: PublishButtonProps
       // Save published card ID to local storage
       await storage.setPreference('published_card_id', publishedCard.id);
       
+      // Set flag to refresh directory when user navigates to it
+      sessionStorage.setItem('directory_needs_refresh', 'true');
+      
       setIsPublished(true);
       setShowModal(false);
       setUsername('');
