@@ -15,7 +15,37 @@ export async function handlePublish(
   corsHeaders: Record<string, string>
 ): Promise<Response> {
   try {
-    const cardData = (await request.json()) as Partial<PublishedCard>;
+    // Parse request body with better error handling
+    let cardData: Partial<PublishedCard>;
+    try {
+      cardData = (await request.json()) as Partial<PublishedCard>;
+    } catch (jsonError) {
+      console.error('JSON parse error:', jsonError);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid JSON',
+          message: 'Request body must be valid JSON'
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Validate required fields before processing
+    if (!cardData.profile) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Validation failed',
+          message: 'Profile is required'
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     // Generate ID and referral code if not provided
     const now = Date.now();
@@ -25,7 +55,7 @@ export async function handlePublish(
       id: cardData.id || generateCardId(),
       username: cardData.username,
       referral_code: cardData.referral_code || generateReferralCode(),
-      profile: cardData.profile!,
+      profile: cardData.profile,
       services: cardData.services || [],
       social: cardData.social || [],
       links: cardData.links || [],
@@ -148,8 +178,9 @@ export async function handlePublish(
     const row = cardToRow(card);
     const updatedAt = Date.now();
 
-    // Insert or update
-    await env.DB.prepare(
+    // Insert or update with better error handling
+    try {
+      await env.DB.prepare(
       `INSERT INTO cards (
         id, username, profile_json, services_json, social_json, links_json,
         ratings_json, testimonials_json, client_photos_json, badges_json,
@@ -210,6 +241,16 @@ export async function handlePublish(
         ownerTokenHash
       )
       .run();
+    } catch (dbError) {
+      console.error('Database insert/update error:', dbError);
+      console.error('Card data:', {
+        id: card.id,
+        username: card.username,
+        hasProfile: !!card.profile,
+        hasServices: !!card.services,
+      });
+      throw new Error(`Database error: ${dbError instanceof Error ? dbError.message : String(dbError)}`);
+    }
 
     // Return published card
     const result = await env.DB.prepare('SELECT * FROM cards WHERE id = ?')
@@ -239,14 +280,41 @@ export async function handlePublish(
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    // Enhanced error logging for debugging
     console.error('Publish error:', error);
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
+    
+    // Check for specific error types
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    let statusCode = 500;
+    let userMessage = 'An error occurred. Please try again later.';
+    
+    // Database errors
+    if (errorMessage.includes('SQLITE') || errorMessage.includes('database') || errorMessage.includes('DB')) {
+      console.error('Database error detected');
+      userMessage = 'Database error. Please try again later.';
+    }
+    // Network/timeout errors
+    else if (errorMessage.includes('timeout') || errorMessage.includes('fetch')) {
+      console.error('Network/timeout error detected');
+      userMessage = 'Request timed out. Please try again.';
+    }
+    
     return new Response(
       JSON.stringify({
         error: 'Failed to publish card',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: userMessage,
+        // Include error details in development
+        ...(env.ENVIRONMENT === 'development' && {
+          details: errorMessage,
+        }),
       }),
       {
-        status: 500,
+        status: statusCode,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
