@@ -90,26 +90,41 @@ jobs:
             echo "Format: https://amei-beauty-api.YOUR_SUBDOMAIN.workers.dev/api"
             exit 1
           else
+            # Check for leading/trailing whitespace
+            API_URL="${{ secrets.VITE_API_URL }}"
+            TRIMMED_URL=$(echo "$API_URL" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+            if [ "$API_URL" != "$TRIMMED_URL" ]; then
+              echo "::error::VITE_API_URL has leading or trailing whitespace!"
+              echo "Original: '$API_URL'"
+              echo "Trimmed:  '$TRIMMED_URL'"
+              echo "Please update the secret to remove spaces. This can cause API calls to fail."
+              exit 1
+            fi
+            
             echo "✅ VITE_API_URL is set"
-            echo "Value: ${{ secrets.VITE_API_URL }}"
+            echo "Value: $API_URL"
             # Validate URL format
-            if [[ "${{ secrets.VITE_API_URL }}" == *"localhost"* ]]; then
+            if [[ "$API_URL" == *"localhost"* ]]; then
               echo "::error::VITE_API_URL contains 'localhost' - this won't work in production!"
               echo "Please set it to your Workers URL: https://amei-beauty-api.adsventures.workers.dev/api"
               exit 1
             fi
-            if [[ "${{ secrets.VITE_API_URL }}" != *"workers.dev"* ]] && [[ "${{ secrets.VITE_API_URL }}" != *"amei.beauty"* ]]; then
+            if [[ "$API_URL" != *"workers.dev"* ]] && [[ "$API_URL" != *"amei.beauty"* ]]; then
               echo "::warning::VITE_API_URL doesn't look like a production URL"
               echo "Expected format: https://amei-beauty-api.adsventures.workers.dev/api"
             fi
-            if [[ "${{ secrets.VITE_API_URL }}" != */api ]]; then
+            if [[ "$API_URL" != */api ]]; then
               echo "::warning::VITE_API_URL should end with /api"
             fi
           fi
 
       - name: Build frontend
         run: |
-          echo "Building with VITE_API_URL=${{ secrets.VITE_API_URL }}"
+          # Trim whitespace from VITE_API_URL to prevent issues
+          API_URL="${{ secrets.VITE_API_URL }}"
+          TRIMMED_API_URL=$(echo "$API_URL" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          echo "Building with VITE_API_URL=$TRIMMED_API_URL"
+          export VITE_API_URL="$TRIMMED_API_URL"
           npm run build
           echo "Build completed. Checking if API URL was embedded correctly..."
           # Check if localhost appears in built files (should not in production)

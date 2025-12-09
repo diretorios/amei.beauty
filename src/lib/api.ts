@@ -6,15 +6,23 @@
 import type { PublishedCard, CardData } from '../models/types';
 import { getAuthHeader, storeOwnerToken } from './auth';
 
-// Get API URL from environment variable
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:8787/api';
+// Get API URL from environment variable and trim whitespace
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || 'http://localhost:8787/api'
+).trim();
 
 // Diagnostic logging for production debugging
 if (import.meta.env.PROD) {
   console.log('[API Config] Production mode detected');
-  console.log('[API Config] VITE_API_URL:', import.meta.env.VITE_API_URL || '(not set)');
+  const rawApiUrl = import.meta.env.VITE_API_URL || '(not set)';
+  console.log('[API Config] VITE_API_URL:', rawApiUrl);
   console.log('[API Config] Using API_BASE_URL:', API_BASE_URL);
+  
+  // Warn if URL has leading/trailing whitespace (indicates misconfigured secret)
+  if (typeof rawApiUrl === 'string' && rawApiUrl !== rawApiUrl.trim()) {
+    console.error('[API Config] ⚠️ WARNING: VITE_API_URL has leading/trailing whitespace!');
+    console.error('[API Config] This may cause API calls to fail. Please update the GitHub Actions secret.');
+  }
   
   // Warn if using localhost in production
   if (API_BASE_URL.includes('localhost')) {
