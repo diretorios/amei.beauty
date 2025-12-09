@@ -23,22 +23,42 @@ import {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-    const path = url.pathname;
-    const method = request.method;
-
-    // CORS headers - restrict origins in production
-    const allowedOrigins = env.ALLOWED_ORIGINS?.split(',') || ['*'];
-    const origin = request.headers.get('Origin') || '';
-    const isAllowedOrigin = allowedOrigins.includes('*') || allowedOrigins.includes(origin);
-    const corsOrigin = isAllowedOrigin ? origin || '*' : allowedOrigins[0];
-
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': corsOrigin,
+    // Default CORS headers - ensure they're always set
+    const defaultCorsHeaders = {
+      'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Max-Age': '86400', // 24 hours
     };
+
+    try {
+      const url = new URL(request.url);
+      const path = url.pathname;
+      const method = request.method;
+
+      // CORS headers - restrict origins in production
+      const allowedOrigins = env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()).filter(Boolean) || ['*'];
+      const origin = request.headers.get('Origin') || '';
+      
+      // Determine CORS origin
+      let corsOrigin = '*';
+      if (allowedOrigins.includes('*')) {
+        // Allow all origins
+        corsOrigin = origin || '*';
+      } else if (origin && allowedOrigins.includes(origin)) {
+        // Origin is in allowed list
+        corsOrigin = origin;
+      } else if (allowedOrigins.length > 0) {
+        // Use first allowed origin as fallback
+        corsOrigin = allowedOrigins[0];
+      }
+
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': corsOrigin,
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Max-Age': '86400', // 24 hours
+      };
 
     // Handle preflight requests (no rate limiting needed)
     if (method === 'OPTIONS') {
@@ -70,6 +90,12 @@ export default {
 
       if (path.startsWith('/api/card/') && method === 'GET') {
         const id = path.split('/api/card/')[1];
+        if (!id) {
+          return new Response(
+            JSON.stringify({ error: 'Card ID is required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
         return handleGetCard(id, env, corsHeaders);
       }
 
@@ -155,6 +181,7 @@ export default {
       console.error('Worker error:', error);
       
       // Return generic error message to client (don't expose internal details)
+      // Always include CORS headers, even on errors
       const isDevelopment = env.ENVIRONMENT === 'development';
       return new Response(
         JSON.stringify({
@@ -164,6 +191,20 @@ export default {
         {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    } catch (outerError) {
+      // Catch any errors that occur before CORS headers are set (e.g., URL parsing, CORS header generation)
+      console.error('Critical worker error:', outerError);
+      return new Response(
+        JSON.stringify({
+          error: 'Internal Server Error',
+          message: 'An error occurred. Please try again later.',
+        }),
+        {
+          status: 500,
+          headers: { ...defaultCorsHeaders, 'Content-Type': 'application/json' },
         }
       );
     }

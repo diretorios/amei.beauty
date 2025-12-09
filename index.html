@@ -11,12 +11,11 @@
     <meta name="apple-mobile-web-app-title" content="amei.beauty" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <!-- Content Security Policy (Note: Configure via HTTP headers in production for better security) -->
+    <!-- Content Security Policy (Note: HTTP headers in public/_headers take precedence. frame-ancestors and X-Frame-Options are set via HTTP headers) -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.cloudflare.com https://*.workers.dev https://static.cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.cloudflare.com https://*.workers.dev https://static.cloudflareinsights.com; base-uri 'self'; form-action 'self';"
     />
-    <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>amei.beauty - Seu cartão profissional em 1 minuto</title>
