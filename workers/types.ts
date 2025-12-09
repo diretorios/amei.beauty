@@ -12,6 +12,7 @@ export interface Env {
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
   AUTH_SECRET?: string; // Secret key for hashing owner tokens
+  LOG_CSP_VIOLATIONS?: string; // Set to 'true' to log CSP violations in production
 }
 
 export interface CardRow {

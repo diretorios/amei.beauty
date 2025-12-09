@@ -14,6 +14,7 @@ import { handleUploadImage } from './handlers/upload-image';
 import { handleDetectLocation } from './handlers/detect-location';
 import { handleEndorse } from './handlers/endorse';
 import { handlePaymentCheckout, handlePaymentWebhook } from './handlers/payment';
+import { handleCspReport } from './handlers/csp-report';
 import {
   checkRateLimit,
   createRateLimitResponse,
@@ -65,9 +66,10 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // Apply rate limiting (skip for health check and webhooks)
+    // Apply rate limiting (skip for health check, webhooks, and CSP reports)
     // Webhooks are verified by signature and shouldn't be rate limited by IP
-    if (path !== '/api/health' && path !== '/api/payment/webhook') {
+    // CSP reports are low-volume and shouldn't be rate limited
+    if (path !== '/api/health' && path !== '/api/payment/webhook' && path !== '/api/csp-report') {
       const endpointType = getEndpointType(path, method);
       const rateLimitResult = await checkRateLimit(request, env, endpointType);
 
@@ -137,6 +139,10 @@ export default {
         return handlePaymentWebhook(request, env, corsHeaders);
       }
 
+      if (path === '/api/csp-report' && method === 'POST') {
+        return handleCspReport(request, env, corsHeaders);
+      }
+
       // API root - return API information
       if (path === '/api' && method === 'GET') {
         return new Response(
@@ -157,6 +163,7 @@ export default {
                 checkout: '/api/payment/checkout',
                 webhook: '/api/payment/webhook',
               },
+              'csp-report': '/api/csp-report',
             },
           }),
           {
