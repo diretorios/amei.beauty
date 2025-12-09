@@ -123,17 +123,37 @@ jobs:
           # Trim whitespace from VITE_API_URL to prevent issues
           API_URL="${{ secrets.VITE_API_URL }}"
           TRIMMED_API_URL=$(echo "$API_URL" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+          
+          # Fail if VITE_API_URL is empty or still localhost after trimming
+          if [ -z "$TRIMMED_API_URL" ]; then
+            echo "::error::VITE_API_URL is empty! Please set it in GitHub Actions secrets."
+            echo "Go to: Settings > Secrets and variables > Actions > New repository secret"
+            echo "Name: VITE_API_URL"
+            echo "Value: https://amei-beauty-api.adsventures.workers.dev/api"
+            exit 1
+          fi
+          
+          if [[ "$TRIMMED_API_URL" == *"localhost"* ]]; then
+            echo "::error::VITE_API_URL contains 'localhost' after trimming: $TRIMMED_API_URL"
+            echo "Please set VITE_API_URL to your production Workers URL in GitHub Actions secrets."
+            echo "Expected: https://amei-beauty-api.adsventures.workers.dev/api"
+            exit 1
+          fi
+          
           echo "Building with VITE_API_URL=$TRIMMED_API_URL"
+          # Export trimmed value - this will be used by Vite during build
           export VITE_API_URL="$TRIMMED_API_URL"
           npm run build
           echo "Build completed. Checking if API URL was embedded correctly..."
           # Check if localhost appears in built files (should not in production)
           if grep -r "localhost:8787" dist/ 2>/dev/null; then
             echo "::error::Build still contains localhost URLs! VITE_API_URL may not have been applied correctly."
+            echo "Expected: $TRIMMED_API_URL"
+            echo "This usually means VITE_API_URL was not set correctly in GitHub Actions secrets."
             exit 1
           fi
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          echo "✅ Build verified: No localhost URLs found in dist/"
+          echo "✅ API URL embedded: $TRIMMED_API_URL"
 
       - name: Deploy to Cloudflare Pages
         run: npm run deploy:pages
