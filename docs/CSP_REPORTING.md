@@ -171,3 +171,4 @@ If you're getting too many violation reports:
 - [MDN: CSP report-uri](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-uri)
 - [W3C CSP Reporting](https://www.w3.org/TR/CSP2/#violation-reports)
 
+

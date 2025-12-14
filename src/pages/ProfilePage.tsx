@@ -119,8 +119,9 @@ export function ProfilePage() {
             onClick={() => {
               window.location.href = '/add-personalized-links';
             }}
-            disabled={true}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
           >
+            {publishedCard && !publishedCard.can_update ? '🔒 ' : ''}
             {t('buttons.add_personalized_links')}
           </Button>
           <Button
@@ -128,8 +129,9 @@ export function ProfilePage() {
             onClick={() => {
               window.location.href = '/add-services-and-prices';
             }}
-            disabled={true}
+            disabled={publishedCard ? (publishedCard.can_update === false) : undefined}
           >
+            {publishedCard && !publishedCard.can_update ? '🔒 ' : ''}
             {t('buttons.add_services_and_prices')}
           </Button>
           <Button
