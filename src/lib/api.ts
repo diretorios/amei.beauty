@@ -126,10 +126,69 @@ async function fetchApi(
   }
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      error: 'Unknown error',
-      message: response.statusText,
-    }));
+    let error: any;
+    let errorText: string | null = null;
+    
+    // Try to parse JSON error response
+    try {
+      error = await response.json();
+    } catch (jsonError) {
+      // If JSON parsing fails, try to get text
+      try {
+        errorText = await response.text();
+        error = {
+          error: 'Unknown error',
+          message: errorText || response.statusText,
+        };
+      } catch (textError) {
+        // If both fail, use status text
+        error = {
+          error: 'Unknown error',
+          message: response.statusText,
+        };
+      }
+    }
+    
+    // Extract error message from various possible formats
+    let errorMessage = 'API request failed';
+    
+    // Check for validation errors with details array (most common)
+    if (error?.details && Array.isArray(error.details) && error.details.length > 0) {
+      // Format validation errors nicely
+      if (error.details.length === 1) {
+        errorMessage = error.details[0];
+      } else {
+        errorMessage = `Validation errors: ${error.details.join('; ')}`;
+      }
+    } else if (error?.message) {
+      // Standard error with message field
+      errorMessage = error.message;
+    } else if (error?.error) {
+      // Error with error field
+      if (typeof error.error === 'object' && error.error?.message) {
+        errorMessage = error.error.message;
+      } else if (typeof error.error === 'string') {
+        errorMessage = error.error;
+      }
+    } else if (error?.details) {
+      // Non-array details field
+      errorMessage = String(error.details);
+    } else if (errorText) {
+      errorMessage = errorText;
+    } else if (response.statusText) {
+      errorMessage = `${response.statusText} (${response.status})`;
+    }
+    
+    // Enhanced error diagnostics
+    console.error('[API Error] Request failed:', {
+      url,
+      endpoint,
+      status: response.status,
+      statusText: response.statusText,
+      errorMessage,
+      errorDetails: error,
+      apiBaseUrl: API_BASE_URL,
+    });
     
     // Enhanced error diagnostics for production
     if (import.meta.env.PROD && response.status >= 500) {
@@ -139,6 +198,7 @@ async function fetchApi(
         status: response.status,
         statusText: response.statusText,
         apiBaseUrl: API_BASE_URL,
+        errorMessage,
       });
     }
     
@@ -153,7 +213,7 @@ async function fetchApi(
       });
     }
     
-    throw new ApiError(error.message || 'API request failed', response.status, error);
+    throw new ApiError(errorMessage, response.status, error);
   }
 
   return response;
@@ -174,21 +234,47 @@ export const api = {
       subscription_tier: 'free',
     };
 
+    // Log publish attempt for debugging
+    console.log('[Publish] Attempting to publish card:', {
+      hasId: 'id' in card,
+      cardId: 'id' in card ? card.id : undefined,
+      username,
+      hasProfile: !!publishedCard.profile,
+      profileName: publishedCard.profile?.full_name,
+      apiUrl: API_BASE_URL,
+    });
+
     // Pass card ID for auth only if card already has an ID (republishing existing card)
     const cardId = 'id' in card ? card.id : undefined;
-    const response = await fetchApi('/publish', {
-      method: 'POST',
-      body: JSON.stringify(publishedCard),
-    }, cardId); // Only pass if card has ID (for republishing)
+    
+    try {
+      const response = await fetchApi('/publish', {
+        method: 'POST',
+        body: JSON.stringify(publishedCard),
+      }, cardId); // Only pass if card has ID (for republishing)
 
-    const publishedCardData = await response.json();
-    
-    // Store token if returned in response (for new cards or legacy cards being upgraded)
-    if (publishedCardData.owner_token) {
-      storeOwnerToken(publishedCardData.id, publishedCardData.owner_token);
+      const publishedCardData = await response.json();
+      
+      console.log('[Publish] Success:', {
+        cardId: publishedCardData.id,
+        hasToken: !!publishedCardData.owner_token,
+      });
+      
+      // Store token if returned in response (for new cards or legacy cards being upgraded)
+      if (publishedCardData.owner_token) {
+        storeOwnerToken(publishedCardData.id, publishedCardData.owner_token);
+      }
+      
+      return publishedCardData;
+    } catch (error) {
+      console.error('[Publish] Failed to publish card:', {
+        error,
+        cardId,
+        username,
+        apiUrl: API_BASE_URL,
+      });
+      throw error;
     }
-    
-    return publishedCardData;
   },
 
   /**
